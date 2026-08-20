@@ -24,7 +24,7 @@
 - [v] CORS 설정 — CORS가 임의 Origin을 허용하지 않음(양호)
 - [v] 페이지 제목 — <title> 있음
 - [v] 모바일 viewport — viewport 메타
-- [v] 응답 속도 — 응답 시간 142ms
+- [v] 응답 속도 — 응답 시간 131ms
 - [v] 문서 크기 — 문서 크기 10KB
 - [v] 개인정보처리방침 — 개인정보처리방침 발견(path: /privacy)
 - [v] 이용약관 — 이용약관 발견(path: /terms)

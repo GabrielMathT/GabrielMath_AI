@@ -10,9 +10,15 @@
 }
 
 /* Smooth Mermaid styles */
+.mermaid-wrapper {
+  max-width: 100%;
+}
+
 .mermaid-wrapper svg {
   max-width: 100% !important;
   height: auto !important;
+  display: block !important;
+  margin: 0 auto !important;
 }
 
 @keyframes fadeIn {

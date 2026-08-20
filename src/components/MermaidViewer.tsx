@@ -24,7 +24,7 @@ export const MermaidViewer: React.FC<MermaidViewerProps> = ({ code, title }) => 
   const [svgContent, setSvgContent] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
-  const [zoom, setZoom] = useState<number>(1);
+  const [zoom, setZoom] = useState<number>(0.8);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isExportingPng, setIsExportingPng] = useState(false);
 
@@ -100,9 +100,9 @@ export const MermaidViewer: React.FC<MermaidViewerProps> = ({ code, title }) => 
     URL.revokeObjectURL(url);
   };
 
-  const handleZoomIn = () => setZoom((prev) => Math.min(prev + 0.2, 2.5));
-  const handleZoomOut = () => setZoom((prev) => Math.max(prev - 0.2, 0.5));
-  const handleResetZoom = () => setZoom(1);
+  const handleZoomIn = () => setZoom((prev) => Math.min(Number((prev + 0.1).toFixed(1)), 2.5));
+  const handleZoomOut = () => setZoom((prev) => Math.max(Number((prev - 0.1).toFixed(1)), 0.3));
+  const handleResetZoom = () => setZoom(0.8);
 
   return (
     <div
@@ -147,7 +147,7 @@ export const MermaidViewer: React.FC<MermaidViewerProps> = ({ code, title }) => 
             </button>
             <button
               onClick={handleResetZoom}
-              title="크기 원래대로"
+              title="기본 크기(80%)로 복원"
               className="p-1 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded text-xs transition"
             >
               <RotateCcw className="w-3.5 h-3.5" />

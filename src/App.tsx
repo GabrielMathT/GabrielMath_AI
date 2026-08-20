@@ -6,6 +6,8 @@ import { TraceSimulator } from './components/TraceSimulator';
 import { ConceptExplainer } from './components/ConceptExplainer';
 import { InteractiveQuiz } from './components/InteractiveQuiz';
 import { StudentReflection } from './components/StudentReflection';
+import { PrivacyPolicyModal } from './components/PrivacyPolicyModal';
+import { TermsModal } from './components/TermsModal';
 import { PRESET_EXAMPLES } from './data/presets';
 import { FlowchartResult, PresetExample, StudentReflectionData } from './types';
 import { Sparkles, GitFork, Play, BookOpen, AlertCircle, CheckCircle, PenLine, FileText } from 'lucide-react';
@@ -19,6 +21,8 @@ export default function App() {
   const [customApiKey, setCustomApiKey] = useState<string>('');
   const [hasEnvKey, setHasEnvKey] = useState<boolean>(true);
   const [activeTab, setActiveTab] = useState<'all' | 'flowchart' | 'trace' | 'concept' | 'reflection'>('all');
+  const [showPrivacyModal, setShowPrivacyModal] = useState<boolean>(false);
+  const [showTermsModal, setShowTermsModal] = useState<boolean>(false);
 
   const [reflectionData, setReflectionData] = useState<StudentReflectionData>({
     studentName: '',
@@ -278,20 +282,33 @@ export default function App() {
             <span className="text-slate-300">|</span>
             <span>© 2026 Gabriel Math. All rights reserved.</span>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-2.5">
             <button
-              onClick={() => {
-                const btn = document.querySelector('button[title="개인정보처리방침 및 학운위 기준 보기"]') as HTMLButtonElement;
-                if (btn) btn.click();
-              }}
+              onClick={() => setShowPrivacyModal(true)}
               className="text-emerald-700 hover:text-emerald-900 font-medium underline cursor-pointer"
             >
-              개인정보처리방침 및 학운위 기준
+              개인정보처리방침 (학운위 기준)
+            </button>
+            <span className="text-slate-300">|</span>
+            <button
+              onClick={() => setShowTermsModal(true)}
+              className="text-slate-600 hover:text-slate-900 font-medium underline cursor-pointer"
+            >
+              이용약관
             </button>
             <span className="text-slate-300">|</span>
             <span className="text-emerald-700 font-medium">※ 학생 개인정보 비수집 안심 모드</span>
           </div>
         </div>
+
+        <PrivacyPolicyModal
+          isOpen={showPrivacyModal}
+          onClose={() => setShowPrivacyModal(false)}
+        />
+        <TermsModal
+          isOpen={showTermsModal}
+          onClose={() => setShowTermsModal(false)}
+        />
       </footer>
     </div>
   );

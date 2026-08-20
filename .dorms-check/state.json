@@ -135,61 +135,94 @@
         "eligible": true,
         "unmet": []
       }
+    },
+    {
+      "n": 6,
+      "at": "2026-08-20T03:12:13.876Z",
+      "security": {
+        "score": 92,
+        "grade": "A-",
+        "eligible": false,
+        "blocking": [
+          "sec.transport.https-redirect",
+          "sec.transport.ssl-valid"
+        ]
+      },
+      "edzip": {
+        "eligible": true,
+        "unmet": []
+      }
+    },
+    {
+      "n": 7,
+      "at": "2026-08-20T03:14:07.732Z",
+      "security": {
+        "score": 64,
+        "grade": "D",
+        "eligible": false,
+        "blocking": [
+          "sec.header.csp"
+        ]
+      },
+      "edzip": {
+        "eligible": true,
+        "unmet": []
+      }
     }
   ],
   "items": {
     "sec.header.csp": {
       "status": "fail",
       "firstFailRound": 1,
-      "fixedRound": null,
-      "regressed": false
+      "fixedRound": 6,
+      "regressed": true
     },
     "sec.header.hsts": {
       "status": "fail",
       "firstFailRound": 1,
-      "fixedRound": null,
-      "regressed": false
+      "fixedRound": 6,
+      "regressed": true
     },
     "sec.header.frame": {
       "status": "fail",
       "firstFailRound": 1,
-      "fixedRound": null,
-      "regressed": false
+      "fixedRound": 6,
+      "regressed": true
     },
     "sec.header.nosniff": {
       "status": "fail",
       "firstFailRound": 1,
-      "fixedRound": null,
-      "regressed": false
+      "fixedRound": 6,
+      "regressed": true
     },
     "sec.header.referrer": {
       "status": "fail",
       "firstFailRound": 1,
-      "fixedRound": null,
-      "regressed": false
+      "fixedRound": 6,
+      "regressed": true
     },
     "sec.header.permissions": {
       "status": "fail",
       "firstFailRound": 1,
-      "fixedRound": null,
-      "regressed": false
+      "fixedRound": 6,
+      "regressed": true
     },
     "sec.fingerprint.powered-by": {
       "status": "pass",
       "firstFailRound": null,
-      "fixedRound": null,
+      "fixedRound": 7,
       "regressed": false
     },
     "sec.transport.https-redirect": {
       "status": "pass",
-      "firstFailRound": null,
-      "fixedRound": null,
+      "firstFailRound": 6,
+      "fixedRound": 7,
       "regressed": false
     },
     "sec.transport.ssl-valid": {
       "status": "pass",
-      "firstFailRound": null,
-      "fixedRound": null,
+      "firstFailRound": 6,
+      "fixedRound": 7,
       "regressed": false
     },
     "sec.transport.old-tls": {
@@ -249,8 +282,8 @@
     "seo.description": {
       "status": "fail",
       "firstFailRound": 1,
-      "fixedRound": null,
-      "regressed": false
+      "fixedRound": 6,
+      "regressed": true
     },
     "seo.viewport": {
       "status": "pass",
@@ -261,8 +294,8 @@
     "seo.og": {
       "status": "fail",
       "firstFailRound": 1,
-      "fixedRound": null,
-      "regressed": false
+      "fixedRound": 6,
+      "regressed": true
     },
     "seo.canonical": {
       "status": "info",

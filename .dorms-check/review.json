@@ -3,66 +3,66 @@
     "status": "pass",
     "evidence": "server.ts configures CSP, HSTS, X-Content-Type-Options: nosniff, Referrer-Policy, and Permissions-Policy on all Express responses",
     "by": "teacher-assistant",
-    "at": "2026-08-20T02:42:24.036Z"
+    "at": "2026-08-20T03:14:03.059Z"
   },
   "code.dangerous-pattern": {
     "status": "pass",
     "evidence": "No dangerous eval or unsafe user-controlled DOM injection; Mermaid rendering is sanitized",
     "by": "teacher-assistant",
-    "at": "2026-08-20T02:42:24.036Z"
+    "at": "2026-08-20T03:14:03.060Z"
   },
   "edzip.1-1": {
     "status": "pass",
     "evidence": "Zero student personal info collected on server; no login required and zero storage retained",
     "by": "teacher-assistant",
-    "at": "2026-08-20T02:42:24.036Z"
+    "at": "2026-08-20T03:14:03.060Z"
   },
   "edzip.1-2": {
     "status": "pass",
     "evidence": "Processing purpose explicitly stated in Privacy Policy modal (Section 1 Article 3) and App header/footer for AI mathematics learning",
     "by": "teacher-assistant",
-    "at": "2026-08-20T02:42:24.036Z"
+    "at": "2026-08-20T03:14:03.060Z"
   },
   "edzip.1-3": {
     "status": "pass",
     "evidence": "Retention period is 0 days; all local data is destroyed upon browser tab closure (Privacy Policy Section 2 Article 4)",
     "by": "teacher-assistant",
-    "at": "2026-08-20T02:42:24.036Z"
+    "at": "2026-08-20T03:14:03.060Z"
   },
   "edzip.2-1": {
     "status": "pass",
     "evidence": "HTTPS TLS v1.3 encryption, CSP, HSTS, and X-Content-Type-Options implemented (Privacy Policy Section 2 Article 5)",
     "by": "teacher-assistant",
-    "at": "2026-08-20T02:42:24.036Z"
+    "at": "2026-08-20T03:14:03.060Z"
   },
   "edzip.3-1": {
     "status": "pass",
     "evidence": "Zero data retained on server; local state can be reset instantly on page (Privacy Policy Section 2 Article 6)",
     "by": "teacher-assistant",
-    "at": "2026-08-20T02:42:24.036Z"
+    "at": "2026-08-20T03:14:03.060Z"
   },
   "edzip.4-1": {
     "status": "pass",
     "evidence": "No personal identification data of minors is transmitted or stored (Privacy Policy Section 3 Article 7)",
     "by": "teacher-assistant",
-    "at": "2026-08-20T02:42:24.036Z"
+    "at": "2026-08-20T03:14:03.060Z"
   },
   "edzip.5-1": {
     "status": "pass",
     "evidence": "Privacy manager designated as Gabriel Math (Gabriel Byeongje Jeon, db_gabriel@gabrielmath.kr) in Privacy Policy Section 3 Article 9",
     "by": "teacher-assistant",
-    "at": "2026-08-20T02:42:24.036Z"
+    "at": "2026-08-20T03:14:03.060Z"
   },
   "edzip.5-2": {
     "status": "pass",
     "evidence": "No third-party provision of student personal data (Privacy Policy Section 3 Article 8)",
     "by": "teacher-assistant",
-    "at": "2026-08-20T02:42:24.036Z"
+    "at": "2026-08-20T03:14:03.060Z"
   },
   "edzip.5-3": {
     "status": "pass",
     "evidence": "Only mathematical algorithm problem text is processed via Google Gemini API over secure HTTPS proxy (Privacy Policy Section 3 Article 8)",
     "by": "teacher-assistant",
-    "at": "2026-08-20T02:42:24.036Z"
+    "at": "2026-08-20T03:14:03.060Z"
   }
 }
