@@ -13,6 +13,38 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const PORT = 3000;
 
+// Security Headers Middleware for dorms-check & production security
+app.use((req, res, next) => {
+  // Strict-Transport-Security (2 years)
+  res.setHeader('Strict-Transport-Security', 'max-age=63072000; includeSubDomains; preload');
+  
+  // MIME Type Sniffing Prevention
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  
+  // Referrer Policy
+  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+  
+  // Permissions Policy
+  res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
+
+  // Clickjacking protection (fallback for older browsers)
+  res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+  
+  // Content Security Policy
+  res.setHeader(
+    'Content-Security-Policy',
+    "default-src 'self'; " +
+    "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net; " +
+    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
+    "font-src 'self' https://fonts.gstatic.com data:; " +
+    "img-src 'self' data: blob: https:; " +
+    "connect-src 'self' https://generativelanguage.googleapis.com; " +
+    "frame-ancestors 'self' https://ais-dev-aceusjdrkwpqlm2nvpn635-418235644195.asia-east1.run.app https://ais-pre-aceusjdrkwpqlm2nvpn635-418235644195.asia-east1.run.app https://*.run.app https://*.google.com https://*.aistudio.google.com;"
+  );
+  
+  next();
+});
+
 app.use(express.json({ limit: '10mb' }));
 
 // Helper to get Gemini client

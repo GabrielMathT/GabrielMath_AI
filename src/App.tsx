@@ -279,7 +279,17 @@ export default function App() {
             <span>© 2026 Gabriel Math. All rights reserved.</span>
           </div>
           <div className="flex items-center gap-3">
-            <span className="text-emerald-700 font-medium">※ 본 프로그램은 학생의 개인정보를 일체 수집 및 저장하지 않습니다.</span>
+            <button
+              onClick={() => {
+                const btn = document.querySelector('button[title="개인정보처리방침 및 학운위 기준 보기"]') as HTMLButtonElement;
+                if (btn) btn.click();
+              }}
+              className="text-emerald-700 hover:text-emerald-900 font-medium underline cursor-pointer"
+            >
+              개인정보처리방침 및 학운위 기준
+            </button>
+            <span className="text-slate-300">|</span>
+            <span className="text-emerald-700 font-medium">※ 학생 개인정보 비수집 안심 모드</span>
           </div>
         </div>
       </footer>

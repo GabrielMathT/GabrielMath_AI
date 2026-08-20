@@ -41,6 +41,100 @@
           "protection.rights.license-consistency"
         ]
       }
+    },
+    {
+      "n": 2,
+      "at": "2026-08-20T02:39:02.687Z",
+      "security": {
+        "score": 64,
+        "grade": "D",
+        "eligible": false,
+        "blocking": [
+          "sec.header.csp"
+        ]
+      },
+      "edzip": {
+        "eligible": false,
+        "unmet": [
+          "edzip.1-1",
+          "edzip.1-2",
+          "edzip.1-3",
+          "edzip.2-1",
+          "edzip.3-1",
+          "edzip.4-1",
+          "edzip.5-1",
+          "edzip.5-2",
+          "edzip.5-3"
+        ]
+      }
+    },
+    {
+      "n": 3,
+      "at": "2026-08-20T02:39:10.837Z",
+      "security": {
+        "score": 64,
+        "grade": "D",
+        "eligible": false,
+        "blocking": [
+          "sec.header.csp"
+        ]
+      },
+      "edzip": {
+        "eligible": false,
+        "unmet": [
+          "edzip.1-1",
+          "edzip.1-2",
+          "edzip.1-3",
+          "edzip.2-1",
+          "edzip.3-1",
+          "edzip.4-1",
+          "edzip.5-1",
+          "edzip.5-2",
+          "edzip.5-3"
+        ]
+      }
+    },
+    {
+      "n": 4,
+      "at": "2026-08-20T02:40:39.536Z",
+      "security": {
+        "score": 64,
+        "grade": "D",
+        "eligible": false,
+        "blocking": [
+          "sec.header.csp"
+        ]
+      },
+      "edzip": {
+        "eligible": false,
+        "unmet": [
+          "edzip.1-1",
+          "edzip.1-2",
+          "edzip.1-3",
+          "edzip.2-1",
+          "edzip.3-1",
+          "edzip.4-1",
+          "edzip.5-1",
+          "edzip.5-2",
+          "edzip.5-3"
+        ]
+      }
+    },
+    {
+      "n": 5,
+      "at": "2026-08-20T02:42:30.013Z",
+      "security": {
+        "score": 64,
+        "grade": "D",
+        "eligible": false,
+        "blocking": [
+          "sec.header.csp"
+        ]
+      },
+      "edzip": {
+        "eligible": true,
+        "unmet": []
+      }
     }
   ],
   "items": {
@@ -243,69 +337,69 @@
       "regressed": false
     },
     "code.headers-config": {
-      "status": "info",
+      "status": "pass",
       "firstFailRound": null,
-      "fixedRound": null,
+      "fixedRound": 5,
       "regressed": false
     },
     "code.dangerous-pattern": {
-      "status": "info",
+      "status": "pass",
       "firstFailRound": null,
-      "fixedRound": null,
+      "fixedRound": 5,
       "regressed": false
     },
     "edzip.1-1": {
-      "status": "pending",
+      "status": "pass",
       "firstFailRound": null,
-      "fixedRound": null,
+      "fixedRound": 5,
       "regressed": false
     },
     "edzip.1-2": {
-      "status": "pending",
+      "status": "pass",
       "firstFailRound": null,
-      "fixedRound": null,
+      "fixedRound": 5,
       "regressed": false
     },
     "edzip.1-3": {
-      "status": "pending",
+      "status": "pass",
       "firstFailRound": null,
-      "fixedRound": null,
+      "fixedRound": 5,
       "regressed": false
     },
     "edzip.2-1": {
-      "status": "pending",
+      "status": "pass",
       "firstFailRound": null,
-      "fixedRound": null,
+      "fixedRound": 5,
       "regressed": false
     },
     "edzip.3-1": {
-      "status": "pending",
+      "status": "pass",
       "firstFailRound": null,
-      "fixedRound": null,
+      "fixedRound": 5,
       "regressed": false
     },
     "edzip.4-1": {
-      "status": "pending",
+      "status": "pass",
       "firstFailRound": null,
-      "fixedRound": null,
+      "fixedRound": 5,
       "regressed": false
     },
     "edzip.5-1": {
-      "status": "pending",
+      "status": "pass",
       "firstFailRound": null,
-      "fixedRound": null,
+      "fixedRound": 5,
       "regressed": false
     },
     "edzip.5-2": {
-      "status": "pending",
+      "status": "pass",
       "firstFailRound": null,
-      "fixedRound": null,
+      "fixedRound": 5,
       "regressed": false
     },
     "edzip.5-3": {
-      "status": "pending",
+      "status": "pass",
       "firstFailRound": null,
-      "fixedRound": null,
+      "fixedRound": 5,
       "regressed": false
     },
     "protection.boundary.client-secrets": {
@@ -443,7 +537,7 @@
   },
   "passed": {
     "security": false,
-    "edzip": false,
+    "edzip": true,
     "protection": false
   },
   "submitted": {}

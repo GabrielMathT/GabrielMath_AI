@@ -6,12 +6,11 @@
   },
   "tracks": [
     "security",
-    "edzip",
-    "protection"
+    "edzip"
   ],
-  "edzipCase": null,
+  "edzipCase": "C",
   "teacher": {
-    "dormsHandle": ""
+    "dormsHandle": "Gabriel Math"
   },
   "ownershipConfirmed": true
 }

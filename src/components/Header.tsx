@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Bot, ShieldCheck, Key, HelpCircle, GraduationCap, Sparkles } from 'lucide-react';
+import { PrivacyPolicyModal } from './PrivacyPolicyModal';
 
 interface HeaderProps {
   customApiKey: string;
@@ -14,6 +15,7 @@ export const Header: React.FC<HeaderProps> = ({
 }) => {
   const [showKeyModal, setShowKeyModal] = useState(false);
   const [inputKey, setInputKey] = useState(customApiKey);
+  const [showPrivacyModal, setShowPrivacyModal] = useState(false);
 
   const handleSaveKey = () => {
     setCustomApiKey(inputKey.trim());
@@ -50,11 +52,16 @@ export const Header: React.FC<HeaderProps> = ({
         {/* Right Status & Badges */}
         <div className="flex items-center gap-2 sm:gap-3">
           {/* Privacy Badge */}
-          <div className="flex items-center gap-1.5 px-2.5 py-1 bg-emerald-50 text-emerald-800 border border-emerald-200 rounded-full text-xs font-medium">
+          <button
+            type="button"
+            onClick={() => setShowPrivacyModal(true)}
+            className="flex items-center gap-1.5 px-2.5 py-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 rounded-full text-xs font-medium transition cursor-pointer"
+            title="개인정보처리방침 및 학운위 기준 보기"
+          >
             <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
             <span className="hidden lg:inline">개인정보 비수집 안심 모드</span>
             <span className="lg:hidden">안심 모드</span>
-          </div>
+          </button>
 
           {/* API Key Status / Config Button */}
           <button
@@ -147,6 +154,11 @@ export const Header: React.FC<HeaderProps> = ({
           </div>
         </div>
       )}
+
+      <PrivacyPolicyModal
+        isOpen={showPrivacyModal}
+        onClose={() => setShowPrivacyModal(false)}
+      />
     </header>
   );
 };
