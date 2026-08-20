@@ -131,14 +131,10 @@ export const PrivacyPolicyModal: React.FC<PrivacyPolicyModalProps> = ({ isOpen, 
 
         {/* Footer */}
         <div className="px-6 py-3.5 border-t border-slate-200 bg-slate-50 rounded-b-2xl flex items-center justify-between">
-          <a
-            href="/privacy"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-xs text-indigo-600 hover:text-indigo-800 font-medium hover:underline inline-flex items-center gap-1"
-          >
-            독립 웹페이지(/privacy)로 보기 ↗
-          </a>
+          <div className="text-[11px] text-emerald-800 font-medium flex items-center gap-1.5">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span>학생 개인정보 0일 보유 · 무저장(Stateless) 시스템</span>
+          </div>
           <button
             onClick={onClose}
             className="px-5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-medium text-xs shadow-xs transition cursor-pointer"

@@ -7,6 +7,7 @@ import { ConceptExplainer } from './components/ConceptExplainer';
 import { InteractiveQuiz } from './components/InteractiveQuiz';
 import { StudentReflection } from './components/StudentReflection';
 import { PrivacyPolicyModal } from './components/PrivacyPolicyModal';
+import { PrivacyPolicyTab } from './components/PrivacyPolicyTab';
 import { TermsModal } from './components/TermsModal';
 import { PRESET_EXAMPLES } from './data/presets';
 import { FlowchartResult, PresetExample, StudentReflectionData } from './types';
@@ -20,6 +21,7 @@ export default function App() {
   const [error, setError] = useState<string | null>(null);
   const [customApiKey, setCustomApiKey] = useState<string>('');
   const [hasEnvKey, setHasEnvKey] = useState<boolean>(true);
+  const [topTab, setTopTab] = useState<'workbench' | 'privacy'>('workbench');
   const [activeTab, setActiveTab] = useState<'all' | 'flowchart' | 'trace' | 'concept' | 'reflection'>('all');
   const [showPrivacyModal, setShowPrivacyModal] = useState<boolean>(false);
   const [showTermsModal, setShowTermsModal] = useState<boolean>(false);
@@ -112,164 +114,173 @@ export default function App() {
         customApiKey={customApiKey}
         setCustomApiKey={setCustomApiKey}
         hasEnvKey={hasEnvKey}
+        activeTab={topTab}
+        setActiveTab={setTopTab}
       />
 
       {/* Main Container */}
       <main className="max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-1 flex flex-col gap-6">
-        {/* Error Alert if any */}
-        {error && (
-          <div className="bg-rose-50 border border-rose-200 p-4 rounded-xl flex items-start gap-3 text-rose-800 text-xs">
-            <AlertCircle className="w-5 h-5 text-rose-600 shrink-0 mt-0.5" />
-            <div className="flex-1">
-              <span className="font-bold">안내: </span>
-              {error}
-            </div>
-            <button
-              onClick={() => setError(null)}
-              className="text-rose-500 hover:text-rose-700 font-bold"
-            >
-              ✕
-            </button>
-          </div>
-        )}
-
-        {/* 2-Column Responsive Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-          {/* Left Column: Input Form (5 Cols) */}
-          <div className="lg:col-span-5 flex flex-col gap-4">
-            <StoryInputForm
-              story={story}
-              setStory={setStory}
-              onGenerate={handleGenerate}
-              onSelectPreset={handleSelectPreset}
-              isLoading={isLoading}
-              selectedPresetId={selectedPreset.id}
-            />
-
-            {/* Quick Curriculum Guide Card */}
-            <div className="bg-white rounded-xl border border-slate-200 p-4 shadow-sm text-xs text-slate-600 flex flex-col gap-2">
-              <h3 className="font-bold text-slate-800 flex items-center gap-1.5">
-                <BookOpen className="w-4 h-4 text-indigo-600" />
-                인공지능 수학 학습 목표
-              </h3>
-              <ul className="list-disc list-inside space-y-1 text-slate-500 text-[11px] leading-relaxed">
-                <li>자연어로 된 수학적 문제 상황을 절차적 알고리즘으로 구조화</li>
-                <li>표준 순서도(시작/종료, 입출력, 처리, 조건판단)를 통해 흐름 시각화</li>
-                <li>순서도 이미지를 PNG/SVG로 추출하여 포트폴리오에 활용</li>
-                <li>루프(반복문)와 조건 분기에 따른 변수 값의 변화 과정을 추적표로 검증</li>
-                <li><strong>생각 쓰기 & 성찰 노트를 작성하고 학습지 PDF 보고서로 저장</strong></li>
-              </ul>
-            </div>
-          </div>
-
-          {/* Right Column: Output & Simulation (7 Cols) */}
-          <div className="lg:col-span-7 flex flex-col gap-5">
-            {/* Output Header with Title and Tabs */}
-            <div className="bg-white rounded-xl border border-slate-200 p-4 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-              <div>
-                <span className="text-[11px] font-bold text-indigo-600 uppercase tracking-wide">
-                  2. 분석 및 실행 결과
-                </span>
-                <h2 className="text-base font-bold text-slate-900 mt-0.5">
-                  {result.algorithmTitle || '알고리즘 분석 결과'}
-                </h2>
-              </div>
-
-              {/* View Switcher Tabs */}
-              <div className="flex flex-wrap items-center gap-1 bg-slate-100 p-1 rounded-lg self-start sm:self-auto">
+        {/* Dedicated Privacy Policy & Security Management Tab View */}
+        {topTab === 'privacy' ? (
+          <PrivacyPolicyTab onBackToWorkbench={() => setTopTab('workbench')} />
+        ) : (
+          <>
+            {/* Error Alert if any */}
+            {error && (
+              <div className="bg-rose-50 border border-rose-200 p-4 rounded-xl flex items-start gap-3 text-rose-800 text-xs">
+                <AlertCircle className="w-5 h-5 text-rose-600 shrink-0 mt-0.5" />
+                <div className="flex-1">
+                  <span className="font-bold">안내: </span>
+                  {error}
+                </div>
                 <button
-                  onClick={() => setActiveTab('all')}
-                  className={`px-2.5 py-1 rounded text-xs font-medium transition ${
-                    activeTab === 'all'
-                      ? 'bg-white text-indigo-700 shadow-xs'
-                      : 'text-slate-600 hover:text-slate-900'
-                  }`}
+                  onClick={() => setError(null)}
+                  className="text-rose-500 hover:text-rose-700 font-bold"
                 >
-                  전체 보기
-                </button>
-                <button
-                  onClick={() => setActiveTab('flowchart')}
-                  className={`px-2.5 py-1 rounded text-xs font-medium transition ${
-                    activeTab === 'flowchart'
-                      ? 'bg-white text-indigo-700 shadow-xs'
-                      : 'text-slate-600 hover:text-slate-900'
-                  }`}
-                >
-                  순서도
-                </button>
-                <button
-                  onClick={() => setActiveTab('trace')}
-                  className={`px-2.5 py-1 rounded text-xs font-medium transition ${
-                    activeTab === 'trace'
-                      ? 'bg-white text-indigo-700 shadow-xs'
-                      : 'text-slate-600 hover:text-slate-900'
-                  }`}
-                >
-                  실행 추적
-                </button>
-                <button
-                  onClick={() => setActiveTab('concept')}
-                  className={`px-2.5 py-1 rounded text-xs font-medium transition ${
-                    activeTab === 'concept'
-                      ? 'bg-white text-indigo-700 shadow-xs'
-                      : 'text-slate-600 hover:text-slate-900'
-                  }`}
-                >
-                  개념·퀴즈
-                </button>
-                <button
-                  onClick={() => setActiveTab('reflection')}
-                  className={`px-2.5 py-1 rounded text-xs font-semibold flex items-center gap-1 transition ${
-                    activeTab === 'reflection'
-                      ? 'bg-indigo-600 text-white shadow-xs'
-                      : 'text-indigo-700 bg-indigo-50 hover:bg-indigo-100'
-                  }`}
-                >
-                  <PenLine className="w-3 h-3" />
-                  생각 쓰기 (PDF)
+                  ✕
                 </button>
               </div>
-            </div>
-
-            {/* Components Based on Active Tab */}
-            {(activeTab === 'all' || activeTab === 'flowchart') && (
-              <MermaidViewer
-                code={result.mermaid}
-                title={result.algorithmTitle}
-              />
             )}
 
-            {(activeTab === 'all' || activeTab === 'trace') && (
-              <TraceSimulator
-                steps={result.traceSteps}
-                variables={result.variables}
-                finalOutput={result.finalOutput}
-              />
-            )}
-
-            {(activeTab === 'all' || activeTab === 'concept') && (
-              <>
-                <ConceptExplainer
-                  title={result.algorithmTitle}
-                  problemSummary={result.problemSummary}
-                  mathConcept={result.mathConcept}
+            {/* 2-Column Responsive Layout */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+              {/* Left Column: Input Form (5 Cols) */}
+              <div className="lg:col-span-5 flex flex-col gap-4">
+                <StoryInputForm
+                  story={story}
+                  setStory={setStory}
+                  onGenerate={handleGenerate}
+                  onSelectPreset={handleSelectPreset}
+                  isLoading={isLoading}
+                  selectedPresetId={selectedPreset.id}
                 />
 
-                {result.quiz && <InteractiveQuiz quiz={result.quiz} />}
-              </>
-            )}
+                {/* Quick Curriculum Guide Card */}
+                <div className="bg-white rounded-xl border border-slate-200 p-4 shadow-sm text-xs text-slate-600 flex flex-col gap-2">
+                  <h3 className="font-bold text-slate-800 flex items-center gap-1.5">
+                    <BookOpen className="w-4 h-4 text-indigo-600" />
+                    인공지능 수학 학습 목표
+                  </h3>
+                  <ul className="list-disc list-inside space-y-1 text-slate-500 text-[11px] leading-relaxed">
+                    <li>자연어로 된 수학적 문제 상황을 절차적 알고리즘으로 구조화</li>
+                    <li>표준 순서도(시작/종료, 입출력, 처리, 조건판단)를 통해 흐름 시각화</li>
+                    <li>순서도 이미지를 PNG/SVG로 추출하여 포트폴리오에 활용</li>
+                    <li>루프(반복문)와 조건 분기에 따른 변수 값의 변화 과정을 추적표로 검증</li>
+                    <li><strong>생각 쓰기 & 성찰 노트를 작성하고 학습지 PDF 보고서로 저장</strong></li>
+                  </ul>
+                </div>
+              </div>
 
-            {/* Student Thought & Reflection Section */}
-            {(activeTab === 'all' || activeTab === 'reflection') && (
-              <StudentReflection
-                story={story}
-                result={result}
-                reflectionData={reflectionData}
-                setReflectionData={setReflectionData}
-              />
-            )}
-          </div>
-        </div>
+              {/* Right Column: Output & Simulation (7 Cols) */}
+              <div className="lg:col-span-7 flex flex-col gap-5">
+                {/* Output Header with Title and Tabs */}
+                <div className="bg-white rounded-xl border border-slate-200 p-4 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <div>
+                    <span className="text-[11px] font-bold text-indigo-600 uppercase tracking-wide">
+                      2. 분석 및 실행 결과
+                    </span>
+                    <h2 className="text-base font-bold text-slate-900 mt-0.5">
+                      {result.algorithmTitle || '알고리즘 분석 결과'}
+                    </h2>
+                  </div>
+
+                  {/* View Switcher Tabs */}
+                  <div className="flex flex-wrap items-center gap-1 bg-slate-100 p-1 rounded-lg self-start sm:self-auto">
+                    <button
+                      onClick={() => setActiveTab('all')}
+                      className={`px-2.5 py-1 rounded text-xs font-medium transition cursor-pointer ${
+                        activeTab === 'all'
+                          ? 'bg-white text-indigo-700 shadow-xs'
+                          : 'text-slate-600 hover:text-slate-900'
+                      }`}
+                    >
+                      전체 보기
+                    </button>
+                    <button
+                      onClick={() => setActiveTab('flowchart')}
+                      className={`px-2.5 py-1 rounded text-xs font-medium transition cursor-pointer ${
+                        activeTab === 'flowchart'
+                          ? 'bg-white text-indigo-700 shadow-xs'
+                          : 'text-slate-600 hover:text-slate-900'
+                      }`}
+                    >
+                      순서도
+                    </button>
+                    <button
+                      onClick={() => setActiveTab('trace')}
+                      className={`px-2.5 py-1 rounded text-xs font-medium transition cursor-pointer ${
+                        activeTab === 'trace'
+                          ? 'bg-white text-indigo-700 shadow-xs'
+                          : 'text-slate-600 hover:text-slate-900'
+                      }`}
+                    >
+                      실행 추적
+                    </button>
+                    <button
+                      onClick={() => setActiveTab('concept')}
+                      className={`px-2.5 py-1 rounded text-xs font-medium transition cursor-pointer ${
+                        activeTab === 'concept'
+                          ? 'bg-white text-indigo-700 shadow-xs'
+                          : 'text-slate-600 hover:text-slate-900'
+                      }`}
+                    >
+                      개념·퀴즈
+                    </button>
+                    <button
+                      onClick={() => setActiveTab('reflection')}
+                      className={`px-2.5 py-1 rounded text-xs font-semibold flex items-center gap-1 transition cursor-pointer ${
+                        activeTab === 'reflection'
+                          ? 'bg-indigo-600 text-white shadow-xs'
+                          : 'text-indigo-700 bg-indigo-50 hover:bg-indigo-100'
+                      }`}
+                    >
+                      <PenLine className="w-3 h-3" />
+                      생각 쓰기 (PDF)
+                    </button>
+                  </div>
+                </div>
+
+                {/* Components Based on Active Tab */}
+                {(activeTab === 'all' || activeTab === 'flowchart') && (
+                  <MermaidViewer
+                    code={result.mermaid}
+                    title={result.algorithmTitle}
+                  />
+                )}
+
+                {(activeTab === 'all' || activeTab === 'trace') && (
+                  <TraceSimulator
+                    steps={result.traceSteps}
+                    variables={result.variables}
+                    finalOutput={result.finalOutput}
+                  />
+                )}
+
+                {(activeTab === 'all' || activeTab === 'concept') && (
+                  <>
+                    <ConceptExplainer
+                      title={result.algorithmTitle}
+                      problemSummary={result.problemSummary}
+                      mathConcept={result.mathConcept}
+                    />
+
+                    {result.quiz && <InteractiveQuiz quiz={result.quiz} />}
+                  </>
+                )}
+
+                {/* Student Thought & Reflection Section */}
+                {(activeTab === 'all' || activeTab === 'reflection') && (
+                  <StudentReflection
+                    story={story}
+                    result={result}
+                    reflectionData={reflectionData}
+                    setReflectionData={setReflectionData}
+                  />
+                )}
+              </div>
+            </div>
+          </>
+        )}
       </main>
 
       {/* Footer */}
@@ -283,34 +294,26 @@ export default function App() {
             <span>© 2026 Gabriel Math. All rights reserved.</span>
           </div>
           <div className="flex flex-wrap items-center gap-2.5">
-            <a
-              href="/privacy"
-              onClick={(e) => {
-                // If user clicks normally without Ctrl/Cmd, open modal for convenience; right-click / direct navigation still opens /privacy
-                if (!e.ctrlKey && !e.metaKey && !e.shiftKey) {
-                  e.preventDefault();
-                  setShowPrivacyModal(true);
-                }
+            <button
+              type="button"
+              onClick={() => {
+                setTopTab('privacy');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
               }}
               className="text-emerald-700 hover:text-emerald-900 font-medium underline cursor-pointer"
-              title="개인정보처리방침 및 보안정책 (/privacy)"
+              title="개인정보처리방침 및 보안 정책 탭 열기"
             >
               개인정보처리방침 및 보안정책
-            </a>
+            </button>
             <span className="text-slate-300">|</span>
-            <a
-              href="/terms"
-              onClick={(e) => {
-                if (!e.ctrlKey && !e.metaKey && !e.shiftKey) {
-                  e.preventDefault();
-                  setShowTermsModal(true);
-                }
-              }}
+            <button
+              type="button"
+              onClick={() => setShowTermsModal(true)}
               className="text-slate-600 hover:text-slate-900 font-medium underline cursor-pointer"
-              title="이용약관 (/terms)"
+              title="이용약관"
             >
               이용약관
-            </a>
+            </button>
             <span className="text-slate-300">|</span>
             <span className="text-emerald-700 font-medium">※ 학생 개인정보 비수집 안심 모드</span>
           </div>

@@ -1,17 +1,21 @@
 import React, { useState } from 'react';
-import { Bot, ShieldCheck, Key, HelpCircle, GraduationCap, Sparkles } from 'lucide-react';
+import { Bot, ShieldCheck, Key, HelpCircle, GraduationCap, Sparkles, LayoutDashboard, Shield } from 'lucide-react';
 import { PrivacyPolicyModal } from './PrivacyPolicyModal';
 
 interface HeaderProps {
   customApiKey: string;
   setCustomApiKey: (key: string) => void;
   hasEnvKey: boolean;
+  activeTab: 'workbench' | 'privacy';
+  setActiveTab: (tab: 'workbench' | 'privacy') => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
   customApiKey,
   setCustomApiKey,
   hasEnvKey,
+  activeTab,
+  setActiveTab,
 }) => {
   const [showKeyModal, setShowKeyModal] = useState(false);
   const [inputKey, setInputKey] = useState(customApiKey);
@@ -27,14 +31,23 @@ export const Header: React.FC<HeaderProps> = ({
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
         {/* Logo & Subject Info */}
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-indigo-500 text-white flex items-center justify-center shadow-md shadow-indigo-100">
+          <button
+            type="button"
+            onClick={() => setActiveTab('workbench')}
+            className="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-indigo-500 text-white flex items-center justify-center shadow-md shadow-indigo-100 cursor-pointer hover:scale-105 transition"
+            title="홈 / 워크벤치"
+          >
             <Bot className="w-6 h-6" />
-          </div>
+          </button>
           <div>
             <div className="flex flex-wrap items-center gap-2">
-              <h1 className="text-base sm:text-lg font-bold text-slate-900 tracking-tight">
+              <button
+                type="button"
+                onClick={() => setActiveTab('workbench')}
+                className="text-left font-bold text-slate-900 tracking-tight text-base sm:text-lg hover:text-indigo-600 transition"
+              >
                 인공지능 수학 순서도 생성기
-              </h1>
+              </button>
               <span className="hidden sm:inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200">
                 <GraduationCap className="w-3.5 h-3.5" />
                 고등학교 인공지능 수학
@@ -49,24 +62,52 @@ export const Header: React.FC<HeaderProps> = ({
           </div>
         </div>
 
+        {/* Center / Navigation Tabs */}
+        <nav className="hidden md:flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200">
+          <button
+            type="button"
+            onClick={() => setActiveTab('workbench')}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer ${
+              activeTab === 'workbench'
+                ? 'bg-white text-indigo-700 shadow-xs'
+                : 'text-slate-600 hover:text-slate-900'
+            }`}
+          >
+            <LayoutDashboard className="w-3.5 h-3.5" />
+            <span>순서도 워크벤치</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setActiveTab('privacy')}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer ${
+              activeTab === 'privacy'
+                ? 'bg-emerald-600 text-white shadow-xs'
+                : 'text-slate-600 hover:text-emerald-700'
+            }`}
+          >
+            <Shield className="w-3.5 h-3.5" />
+            <span>개인정보 & 보안 정책</span>
+          </button>
+        </nav>
+
         {/* Right Status & Badges */}
         <div className="flex items-center gap-2 sm:gap-3">
-          {/* Privacy Badge */}
-          <a
-            href="/privacy"
-            onClick={(e) => {
-              if (!e.ctrlKey && !e.metaKey && !e.shiftKey) {
-                e.preventDefault();
-                setShowPrivacyModal(true);
-              }
-            }}
-            className="flex items-center gap-1.5 px-2.5 py-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 rounded-full text-xs font-medium transition cursor-pointer"
-            title="개인정보처리방침 및 보안정책 (/privacy)"
+          {/* Privacy Badge -> switches to Privacy Tab */}
+          <button
+            type="button"
+            onClick={() => setActiveTab('privacy')}
+            className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border transition cursor-pointer ${
+              activeTab === 'privacy'
+                ? 'bg-emerald-600 text-white border-emerald-600 shadow-xs'
+                : 'bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border-emerald-200'
+            }`}
+            title="개인정보처리방침 및 보안 정책 탭 열기"
           >
-            <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
+            <ShieldCheck className={`w-4 h-4 shrink-0 ${activeTab === 'privacy' ? 'text-white' : 'text-emerald-600'}`} />
             <span className="hidden lg:inline">개인정보 비수집 안심 모드</span>
             <span className="lg:hidden">안심 모드</span>
-          </a>
+          </button>
 
           {/* API Key Status / Config Button */}
           <button
