@@ -270,11 +270,13 @@ export default function App() {
 
       {/* Footer */}
       <footer className="bg-white border-t border-slate-200 py-4 mt-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 gap-2">
-          <div className="flex items-center gap-2">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 gap-3">
+          <div className="flex flex-wrap items-center gap-2">
             <span className="font-semibold text-slate-700">고등학교 인공지능 수학 순서도 생성 & 결과 예측기</span>
             <span className="text-slate-300">|</span>
-            <span>교육용 무상 제공 프로그램</span>
+            <span>개발자: <strong className="text-slate-800 font-semibold">Gabriel Math (Gabriel Byeongje Jeon)</strong></span>
+            <span className="text-slate-300">|</span>
+            <span>© 2026 Gabriel Math. All rights reserved.</span>
           </div>
           <div className="flex items-center gap-3">
             <span className="text-emerald-700 font-medium">※ 본 프로그램은 학생의 개인정보를 일체 수집 및 저장하지 않습니다.</span>

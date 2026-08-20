@@ -29,13 +29,16 @@ export const Header: React.FC<HeaderProps> = ({
             <Bot className="w-6 h-6" />
           </div>
           <div>
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
               <h1 className="text-base sm:text-lg font-bold text-slate-900 tracking-tight">
                 인공지능 수학 순서도 생성기
               </h1>
               <span className="hidden sm:inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200">
                 <GraduationCap className="w-3.5 h-3.5" />
                 고등학교 인공지능 수학
+              </span>
+              <span className="inline-flex items-center gap-1 text-[11px] font-medium px-2 py-0.5 rounded-md bg-slate-100 text-slate-700 border border-slate-200">
+                개발자: <strong className="font-semibold text-indigo-900">Gabriel Math (Gabriel Byeongje Jeon)</strong>
               </span>
             </div>
             <p className="text-xs text-slate-500 hidden md:block">
