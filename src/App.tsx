@@ -312,15 +312,6 @@ export default function App() {
               이용약관
             </a>
             <span className="text-slate-300">|</span>
-            <a
-              href="/privacy"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-indigo-600 hover:text-indigo-800 text-[11px] font-medium hover:underline inline-flex items-center gap-1"
-            >
-              새 창으로 열기 ↗
-            </a>
-            <span className="text-slate-300">|</span>
             <span className="text-emerald-700 font-medium">※ 학생 개인정보 비수집 안심 모드</span>
           </div>
         </div>
