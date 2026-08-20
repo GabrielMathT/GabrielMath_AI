@@ -1,0 +1,17 @@
+{
+  "app": {
+    "name": "인공지능 수학 순서도 생성기",
+    "url": "https://ais-dev-aceusjdrkwpqlm2nvpn635-418235644195.asia-east1.run.app",
+    "stack": "Vite"
+  },
+  "tracks": [
+    "security",
+    "edzip",
+    "protection"
+  ],
+  "edzipCase": null,
+  "teacher": {
+    "dormsHandle": ""
+  },
+  "ownershipConfirmed": true
+}

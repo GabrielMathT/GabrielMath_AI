@@ -1,0 +1,6 @@
+{
+  "name": "인공지능 수학 순서도 생성기",
+  "description": "수학적 알고리즘과 상황을 입력하여 순서도(Flowchart)를 자동 생성하고, 변수 변화 추적 및 실행 결과를 예측하는 고등학교 인공지능 수학 학습 웹앱",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
