@@ -19,6 +19,53 @@ mermaid.initialize({
   },
 });
 
+/**
+ * Sanitizes and formats Mermaid syntax to prevent syntax parser errors caused by
+ * special characters like ( ), !=, <, >, *, ^, etc., unquoted inside shape delimiters.
+ */
+function sanitizeMermaidCode(raw: string): string {
+  let cleaned = raw
+    .replace(/```mermaid/g, '')
+    .replace(/```/g, '')
+    .trim();
+
+  if (!cleaned.startsWith('graph') && !cleaned.startsWith('flowchart')) {
+    cleaned = 'graph TD\n' + cleaned;
+  }
+
+  const lines = cleaned.split('\n');
+  const sanitizedLines = lines.map((line) => {
+    let l = line;
+
+    // 1. Fix unquoted parallelogram nodes: [/ ... /] -> [/"..."/]
+    l = l.replace(/\[\/(?!")(.*?)(?<!")\/\]/g, (_, content) => {
+      const escaped = content.trim().replace(/"/g, "'");
+      return `[/"${escaped}"/]`;
+    });
+
+    // 2. Fix unquoted diamond condition nodes: { ... } -> {"..."}
+    l = l.replace(/\{(?!")(.*?)(?<!")\}/g, (_, content) => {
+      const escaped = content.trim().replace(/"/g, "'");
+      return `{"${escaped}"}`;
+    });
+
+    // 3. Fix unquoted rectangle nodes with complex characters: [ ... ] -> ["..."]
+    // Avoid stadium ([ ... ]) and parallelogram [/ ... /]
+    l = l.replace(/(?<![\[\(])\[(?![\/"(])(.*?)(?<![\/"])\](?![\]\)])/g, (match, content) => {
+      const trimmed = content.trim();
+      if (!trimmed.startsWith('"') && /[=+\-*\/^()<>&!%,]/.test(trimmed)) {
+        const escaped = trimmed.replace(/"/g, "'");
+        return `["${escaped}"]`;
+      }
+      return match;
+    });
+
+    return l;
+  });
+
+  return sanitizedLines.join('\n');
+}
+
 export const MermaidViewer: React.FC<MermaidViewerProps> = ({ code, title }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [svgContent, setSvgContent] = useState<string>('');
@@ -34,19 +81,34 @@ export const MermaidViewer: React.FC<MermaidViewerProps> = ({ code, title }) => 
     const renderChart = async () => {
       if (!code) return;
       setError(null);
-      try {
-        const id = `mermaid-svg-${Math.random().toString(36).substring(2, 9)}`;
-        const cleanCode = code
-          .replace(/```mermaid/g, '')
-          .replace(/```/g, '')
-          .trim();
 
+      const id = `mermaid-svg-${Math.random().toString(36).substring(2, 9)}`;
+      const cleanCode = code
+        .replace(/```mermaid/g, '')
+        .replace(/```/g, '')
+        .trim();
+
+      // First attempt with original clean code
+      try {
         const { svg } = await mermaid.render(id, cleanCode);
         if (isMounted) {
           setSvgContent(svg);
         }
-      } catch (err: any) {
-        console.error('Mermaid render error:', err);
+        return;
+      } catch (firstErr) {
+        console.warn('Initial Mermaid render failed, attempting sanitization...', firstErr);
+      }
+
+      // Second attempt with sanitized code
+      try {
+        const sanitized = sanitizeMermaidCode(cleanCode);
+        const retryId = `mermaid-retry-${Math.random().toString(36).substring(2, 9)}`;
+        const { svg } = await mermaid.render(retryId, sanitized);
+        if (isMounted) {
+          setSvgContent(svg);
+        }
+      } catch (finalErr: any) {
+        console.error('Final Mermaid render error:', finalErr);
         if (isMounted) {
           setError('순서도 렌더링 중 문법 오류가 발생했습니다. 순서도 코드를 확인해주세요.');
         }
