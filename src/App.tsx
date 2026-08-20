@@ -283,19 +283,43 @@ export default function App() {
             <span>© 2026 Gabriel Math. All rights reserved.</span>
           </div>
           <div className="flex flex-wrap items-center gap-2.5">
-            <button
-              onClick={() => setShowPrivacyModal(true)}
+            <a
+              href="/privacy"
+              onClick={(e) => {
+                // If user clicks normally without Ctrl/Cmd, open modal for convenience; right-click / direct navigation still opens /privacy
+                if (!e.ctrlKey && !e.metaKey && !e.shiftKey) {
+                  e.preventDefault();
+                  setShowPrivacyModal(true);
+                }
+              }}
               className="text-emerald-700 hover:text-emerald-900 font-medium underline cursor-pointer"
+              title="개인정보처리방침 및 보안정책 (/privacy)"
             >
-              개인정보처리방침 (학운위 기준)
-            </button>
+              개인정보처리방침 및 보안정책
+            </a>
             <span className="text-slate-300">|</span>
-            <button
-              onClick={() => setShowTermsModal(true)}
+            <a
+              href="/terms"
+              onClick={(e) => {
+                if (!e.ctrlKey && !e.metaKey && !e.shiftKey) {
+                  e.preventDefault();
+                  setShowTermsModal(true);
+                }
+              }}
               className="text-slate-600 hover:text-slate-900 font-medium underline cursor-pointer"
+              title="이용약관 (/terms)"
             >
               이용약관
-            </button>
+            </a>
+            <span className="text-slate-300">|</span>
+            <a
+              href="/privacy"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-indigo-600 hover:text-indigo-800 text-[11px] font-medium hover:underline inline-flex items-center gap-1"
+            >
+              새 창으로 열기 ↗
+            </a>
             <span className="text-slate-300">|</span>
             <span className="text-emerald-700 font-medium">※ 학생 개인정보 비수집 안심 모드</span>
           </div>

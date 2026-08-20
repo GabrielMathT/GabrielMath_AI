@@ -67,22 +67,55 @@ export const PrivacyPolicyModal: React.FC<PrivacyPolicyModalProps> = ({ isOpen, 
             </ul>
           </div>
 
-          {/* 제7조~제9조: 아동 보호, 위탁, 책임자 */}
+          {/* 제7조: 상세 보안 정책 표 */}
+          <div className="border border-slate-200 rounded-xl p-4 bg-slate-50/50">
+            <h4 className="font-bold text-slate-900 text-sm mb-2">
+              제3장 웹 보안 정책 (Security Policy) 적용 현황
+            </h4>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[11px] text-slate-700">
+              <div className="bg-white p-2.5 rounded-lg border border-slate-200">
+                <span className="font-semibold text-indigo-900 block">Content-Security-Policy (CSP)</span>
+                악성 스크립트(XSS) 삽입 및 비인가 도메인 리소스 로딩 차단
+              </div>
+              <div className="bg-white p-2.5 rounded-lg border border-slate-200">
+                <span className="font-semibold text-indigo-900 block">Strict-Transport-Security (HSTS)</span>
+                항상 HTTPS(TLS v1.3) 암호화 연결을 강제하여 중간자 도청 방어
+              </div>
+              <div className="bg-white p-2.5 rounded-lg border border-slate-200">
+                <span className="font-semibold text-indigo-900 block">X-Frame-Options (Clickjacking 방어)</span>
+                타 사이트에서 몰래 화면을 띄워 클릭을 가로채는 공격 방지
+              </div>
+              <div className="bg-white p-2.5 rounded-lg border border-slate-200">
+                <span className="font-semibold text-indigo-900 block">X-Content-Type-Options: nosniff</span>
+                브라우저의 파일 확장자 임의 변조 해석 공격 방어
+              </div>
+              <div className="bg-white p-2.5 rounded-lg border border-slate-200">
+                <span className="font-semibold text-indigo-900 block">Referrer-Policy: strict-origin...</span>
+                외부 링크 이동 시 민감한 URL 쿼리 정보 노출 방지
+              </div>
+              <div className="bg-white p-2.5 rounded-lg border border-slate-200">
+                <span className="font-semibold text-indigo-900 block">Permissions-Policy</span>
+                카메라, 마이크, GPS 위치 정보 등 불필요한 브라우저 기기 권한 차단
+              </div>
+            </div>
+          </div>
+
+          {/* 제8조~제10조: 아동 보호, 위탁, 책임자 */}
           <div className="border border-slate-200 rounded-xl p-4 bg-slate-50/50">
             <h4 className="font-bold text-slate-900 text-sm mb-2 flex items-center gap-1.5">
-              <span>제3장 아동 보호, 제3자 제공·위탁 및 보호책임자 (제7조 ~ 제9조)</span>
+              <span>제4장 아동 보호, 제3자 제공·위탁 및 보호책임자 (제8조 ~ 제10조)</span>
             </h4>
             <ul className="list-disc list-inside space-y-1.5 text-slate-600">
-              <li><strong>제7조 (만 14세 미만 아동 보호):</strong> 학생 식별정보는 외부로 절대 전송되지 않으며, 수학적 알고리즘 텍스트만 인공지능 프롬프트로 전송됩니다.</li>
-              <li><strong>제8조 (제3자 제공 및 위탁):</strong> 학생 개인정보의 제3자 제공은 일체 없습니다. 단, 사용자가 입력한 수학 알고리즘 설명 텍스트는 Google Cloud Gemini API(구글 클라우드 보안 환경)를 통해 암호화 전송되어 순서도 코드를 생성합니다.</li>
-              <li><strong>제9조 (개인정보 보호책임자 및 개발자):</strong> Gabriel Math (Gabriel Byeongje Jeon) / 문의 이메일: db_gabriel@gabrielmath.kr</li>
+              <li><strong>제8조 (만 14세 미만 아동 보호):</strong> 학생 식별정보는 외부로 절대 전송되지 않으며, 수학적 알고리즘 텍스트만 인공지능 프롬프트로 전송됩니다.</li>
+              <li><strong>제9조 (제3자 제공 및 위탁):</strong> 학생 개인정보의 제3자 제공은 일체 없습니다. 단, 사용자가 입력한 수학 알고리즘 설명 텍스트는 Google Cloud Gemini API(구글 클라우드 보안 환경)를 통해 암호화 전송되어 순서도 코드를 생성합니다.</li>
+              <li><strong>제10조 (개인정보 보호책임자 및 개발자):</strong> Gabriel Math (Gabriel Byeongje Jeon) / 문의 이메일: db_gabriel@gabrielmath.kr</li>
             </ul>
           </div>
 
           {/* 저작권 및 이용 라이선스 */}
           <div className="border border-indigo-100 rounded-xl p-4 bg-indigo-50/50 text-indigo-950">
             <h4 className="font-bold text-indigo-900 text-sm mb-1.5">
-              제4장 저작권 및 이용 안내
+              제5장 저작권 및 이용 안내
             </h4>
             <p className="mb-1">
               - <strong>개발자 / 권리자:</strong> Gabriel Math (Gabriel Byeongje Jeon)
@@ -97,10 +130,18 @@ export const PrivacyPolicyModal: React.FC<PrivacyPolicyModalProps> = ({ isOpen, 
         </div>
 
         {/* Footer */}
-        <div className="px-6 py-3.5 border-t border-slate-200 bg-slate-50 rounded-b-2xl flex justify-end">
+        <div className="px-6 py-3.5 border-t border-slate-200 bg-slate-50 rounded-b-2xl flex items-center justify-between">
+          <a
+            href="/privacy"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-xs text-indigo-600 hover:text-indigo-800 font-medium hover:underline inline-flex items-center gap-1"
+          >
+            독립 웹페이지(/privacy)로 보기 ↗
+          </a>
           <button
             onClick={onClose}
-            className="px-5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-medium text-xs shadow-xs transition"
+            className="px-5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-medium text-xs shadow-xs transition cursor-pointer"
           >
             확인 및 닫기
           </button>
