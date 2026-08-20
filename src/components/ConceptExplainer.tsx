@@ -50,7 +50,15 @@ export const ConceptExplainer: React.FC<ConceptExplainerProps> = ({
           <Lightbulb className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
           <div className="leading-relaxed">
             <span className="font-bold text-amber-800">💡 학습 가이드 (AI Math Tip): </span>
-            인공지능의 핵심인 신경망 훈련과 최적화는 이처럼 <span className="font-semibold text-amber-950">초기화 → 반복 계산(Loop) → 오차/기울기 평가 → 변수 갱신(Update) → 조건 판단</span>의 순서도 구조를 기반으로 작동합니다.
+            {title.includes('전문가') || problemSummary.includes('전문가') || problemSummary.includes('지식 베이스') || mathConcept.includes('전문가') ? (
+              <>
+                전문가시스템(Expert System)은 <span className="font-semibold text-amber-950">전문가의 지식 → 지식 베이스(IF-THEN 규칙) → 추론 엔진(Inference Engine, 논리 연산) → 사용자 인터페이스</span> 구조로 작동합니다. 고등학교 인공지능 수학에서는 명제 논리, 조건문, 결정 트리가 어떻게 규칙 기반 인공지능으로 구현되는지 파악하는 것이 핵심입니다.
+              </>
+            ) : (
+              <>
+                인공지능의 핵심인 신경망 훈련과 최적화는 이처럼 <span className="font-semibold text-amber-950">초기화 → 반복 계산(Loop) → 오차/기울기 평가 → 변수 갱신(Update) → 조건 판단</span>의 순서도 구조를 기반으로 작동합니다.
+              </>
+            )}
           </div>
         </div>
       </div>

@@ -237,4 +237,243 @@ B가 0이 되면 현재 A를 최대공약수로 출력하고 끝냅니다.`,
       },
     },
   },
+  {
+    id: 'expert_animals',
+    title: '동물의 식성에 따른 분류 전문가시스템',
+    category: '전문가시스템 & 규칙',
+    description: '교과서 본문 대표 예제: 지식 베이스(IF-THEN 규칙)와 사실 입력을 통한 동물 식성 판정',
+    story: `[전문가시스템 지식 베이스]
+규칙 1: IF (어떤 동물 x는 동물만 먹이로 한다.) THEN (육식 동물이다.)
+규칙 2: IF (어떤 동물 x는 식물만 먹이로 한다.) THEN (초식 동물이다.)
+규칙 3: IF (어떤 동물 x는 동물을 먹이로 한다 AND 식물을 먹이로 한다.) THEN (잡식 동물이다.)
+
+[테스트 사실 (Fact)]
+동물 x = '코끼리' (식물만 먹이로 함)를 입력하여 추론 엔진을 통해 분류 결과를 예측합니다.`,
+    expertRules: [
+      { id: '1', condition: '동물 x는 동물만 먹이로 한다', conclusion: '육식 동물이다' },
+      { id: '2', condition: '동물 x는 식물만 먹이로 한다', conclusion: '초식 동물이다' },
+      { id: '3', condition: '동물 x는 동물을 먹이로 한다 AND 식물을 먹이로 한다', conclusion: '잡식 동물이다' },
+    ],
+    testFact: "x = '코끼리' (식물만 섭취)",
+    presetResult: {
+      algorithmTitle: '동물의 식성 분류 전문가시스템 알고리즘',
+      mermaid: `graph TD
+    A([시작]) --> B[/동물 x 입력/]
+    B --> C{"① x는 식물을 먹이로 하는가?"}
+    C -->|예 Yes| D{"② x는 동물을 먹이로 하는가?"}
+    C -->|아니오 No| E[/육식 동물 출력/]
+    D -->|예 Yes| F[/잡식 동물 출력/]
+    D -->|아니오 No| G[/초식 동물 출력/]
+    E --> H([종료])
+    F --> H
+    G --> H`,
+      problemSummary: '전문가의 지식을 지식 베이스(IF-THEN 규칙)로 저장하고, 사용자가 입력한 동물 x의 섭식 사실(Fact)을 바탕으로 추론 엔진이 논리 연산을 수행하여 육식/초식/잡식 동물을 분류하는 전문가시스템입니다.',
+      variables: [
+        { name: 'x', role: '분류할 대상 동물 이름 (예: 코끼리)', initialValue: '코끼리' },
+        { name: 'eatsPlant', role: '식물을 먹이로 하는지 여부 (참/거짓)', initialValue: '참(True)' },
+        { name: 'eatsMeat', role: '동물을 먹이로 하는지 여부 (참/거짓)', initialValue: '거짓(False)' },
+        { name: 'result', role: '추론 엔진의 최종 판단 결과', initialValue: '미정' },
+      ],
+      traceSteps: [
+        { stepNum: 1, iteration: '사실 입력', description: "사용자 인터페이스를 통해 x='코끼리' 입력", varStates: "x = '코끼리', eatsPlant = 참, eatsMeat = 거짓" },
+        { stepNum: 2, iteration: '규칙 비교 ①', description: '조건 ①: x는 식물을 먹이로 하는가? 판정', varStates: 'eatsPlant == 참(True)', conditionResult: '참(True) -> 조건 ② 분기로 이동' },
+        { stepNum: 3, iteration: '규칙 비교 ②', description: '조건 ②: x는 동물을 먹이로 하는가? 판정', varStates: 'eatsMeat == 거짓(False)', conditionResult: '거짓(False) -> 규칙 2 만족 (초식 동물)' },
+        { stepNum: 4, iteration: '추론 결과 도출', description: "지식 베이스 규칙 2에 의해 result='초식 동물' 확정", varStates: "result = '초식 동물'" },
+        { stepNum: 5, iteration: '결과 출력', description: "사용자 인터페이스에 '초식 동물' 출력 후 종료", varStates: "x = '코끼리', 출력: '초식 동물'" },
+      ],
+      finalOutput: "동물 '코끼리' 판정 결과: 초식 동물 (규칙 2: IF 식물만 먹이로 함 THEN 초식 동물)",
+      mathConcept: '인공지능의 1세대 접근법인 전문가시스템(Expert System)의 원리입니다. [전문가의 지식 → 지식 베이스(IF A THEN B 규칙) → 추론 엔진(Inference Engine, 논리 연산) → 사용자 인터페이스] 구조로 이루어지며, 논리합(OR), 논리곱(AND), 조건문(IF)의 수학적 명제 논리를 순서도로 체계화합니다.',
+      quiz: {
+        question: "어떤 동물 x가 '곰'이고 식물과 동물을 모두 먹이로 한다면, 위 순서도에서 ①번 조건과 ②번 조건의 판단 결과는 각각 무엇일까요?",
+        options: [
+          '① 예, ② 예 (잡식 동물 출력)',
+          '① 예, ② 아니오 (초식 동물 출력)',
+          '① 아니오, ② 예 (육식 동물 출력)',
+          '① 아니오, ② 아니오 (분류 불가)'
+        ],
+        answerIndex: 0,
+        explanation: "곰은 식물을 먹으므로 ①번에서 '예'로 이동하고, 동물도 먹으므로 ②번에서도 '예'로 이동하여 '잡식 동물'을 출력합니다.",
+      },
+    },
+  },
+  {
+    id: 'expert_triangles',
+    title: '세 변의 길이에 따른 삼각형 분류 전문가시스템',
+    category: '전문가시스템 & 규칙',
+    description: '교과서 문제 08: 세 변 a, b, c(a ≤ b ≤ c)와 피타고라스 정리 규칙을 이용한 삼각형 종류 판별',
+    story: `[전문가시스템 지식 베이스]
+세 변의 길이가 a, b, c (a ≤ b ≤ c)인 삼각형에 대하여:
+규칙 1: IF (c^2 < a^2 + b^2) THEN (예각삼각형이다.)
+규칙 2: IF (c^2 = a^2 + b^2) THEN (직각삼각형이다.)
+규칙 3: IF (c^2 > a^2 + b^2) THEN (둔각삼각형이다.)
+
+[테스트 사실 (Fact)]
+세 변의 길이 a = 3, b = 4, c = 5 를 입력하여 추론 엔진을 통해 어떤 삼각형인지 판정합니다.`,
+    expertRules: [
+      { id: '1', condition: 'c^2 < a^2 + b^2', conclusion: '예각삼각형이다' },
+      { id: '2', condition: 'c^2 == a^2 + b^2', conclusion: '직각삼각형이다' },
+      { id: '3', condition: 'c^2 > a^2 + b^2', conclusion: '둔각삼각형이다' },
+    ],
+    testFact: 'a = 3, b = 4, c = 5',
+    presetResult: {
+      algorithmTitle: '삼각형 분류 전문가시스템 (피타고라스 정리 기반)',
+      mermaid: `graph TD
+    A([시작]) --> B[/세 변의 길이 a, b, c 입력 /]
+    B --> C[LHS = c^2, RHS = a^2 + b^2 계산]
+    C --> D{"LHS < RHS ? (c^2 < a^2 + b^2)"}
+    D -->|예 Yes| E[/예각삼각형 출력/]
+    D -->|아니오 No| F{"LHS == RHS ? (c^2 == a^2 + b^2)"}
+    F -->|예 Yes| G[/직각삼각형 출력/]
+    F -->|아니오 No| H[/둔각삼각형 출력/]
+    E --> I([종료])
+    G --> I
+    H --> I`,
+      problemSummary: '세 변의 길이 a, b, c (a ≤ b ≤ c)를 입력받아 지식 베이스에 저장된 c^2과 a^2 + b^2의 대소 관계 규칙을 적용하여 예각·직각·둔각삼각형을 판별하는 전문가시스템 알고리즘입니다.',
+      variables: [
+        { name: 'a, b, c', role: '삼각형의 세 변의 길이 (가장 긴 변 c)', initialValue: 'a=3, b=4, c=5' },
+        { name: 'LHS', role: '빗변의 제곱 c^2', initialValue: '25' },
+        { name: 'RHS', role: '나머지 두 변의 제곱의 합 a^2 + b^2', initialValue: '25' },
+        { name: 'result', role: '추론 엔진의 최종 삼각형 판정', initialValue: '미정' },
+      ],
+      traceSteps: [
+        { stepNum: 1, iteration: '사실 입력', description: '세 변의 길이 a=3, b=4, c=5 입력', varStates: 'a = 3, b = 4, c = 5' },
+        { stepNum: 2, iteration: '연산 처리', description: 'LHS = 5^2 = 25, RHS = 3^2 + 4^2 = 9 + 16 = 25 계산', varStates: 'LHS = 25, RHS = 25' },
+        { stepNum: 3, iteration: '규칙 1 검사', description: 'LHS < RHS (25 < 25) 비교', varStates: '25 < 25', conditionResult: '거짓(False) -> 다음 규칙 검사로 이동' },
+        { stepNum: 4, iteration: '규칙 2 검사', description: 'LHS == RHS (25 == 25) 비교', varStates: '25 == 25', conditionResult: '참(True) -> 규칙 2 충족 (직각삼각형)' },
+        { stepNum: 5, iteration: '결과 출력', description: "추론 결과 '직각삼각형' 출력 후 종료", varStates: "result = '직각삼각형'" },
+      ],
+      finalOutput: '판정 결과: 직각삼각형 (c^2 = 25, a^2 + b^2 = 25 이므로 직각삼각형)',
+      mathConcept: '피타고라스 정리의 역과 삼각형의 변의 길이 관계에 대한 수학적 정리입니다. 둔각(c^2 > a^2 + b^2), 직각(c^2 = a^2 + b^2), 예각(c^2 < a^2 + b^2)의 수학 규칙을 전문가시스템의 IF-THEN 지식 베이스로 표현하고 순서도로 제어 분기를 구현합니다.',
+      quiz: {
+        question: '세 변의 길이가 a=4, b=5, c=6 일 때, 위 전문가시스템의 판별 결과는 무엇일까요?',
+        options: [
+          '예각삼각형 (6^2 = 36 < 4^2 + 5^2 = 41)',
+          '직각삼각형 (6^2 = 36 == 4^2 + 5^2 = 36)',
+          '둔각삼각형 (6^2 = 36 > 4^2 + 5^2 = 30)',
+          '삼각형이 만들어지지 않음'
+        ],
+        answerIndex: 0,
+        explanation: 'c^2 = 36이고 a^2 + b^2 = 16 + 25 = 41이므로 c^2 < a^2 + b^2(36 < 41)을 만족하여 규칙 1에 의해 예각삼각형입니다.',
+      },
+    },
+  },
+  {
+    id: 'expert_quadratic',
+    title: '이차방정식 실근 개수 판별 전문가시스템',
+    category: '전문가시스템 & 규칙',
+    description: '교과서 문제 09: 판별식 D = b^2 - 4ac 규칙을 지식 베이스로 구축하여 실근 개수(2개, 1개, 0개) 판정',
+    story: `[전문가시스템 지식 베이스]
+세 실수 a, b, c (a ≠ 0)에 대하여 판별식 D = b^2 - 4ac 일 때:
+규칙 1: IF (D > 0) THEN (서로 다른 두 실근 (실근 2개)이다.)
+규칙 2: IF (D = 0) THEN (중근 (실근 1개)이다.)
+규칙 3: IF (D < 0) THEN (서로 다른 두 허근 (실근 0개)이다.)
+
+[테스트 사실 (Fact)]
+이차방정식 2x^2 - 4x + 2 = 0 (a = 2, b = -4, c = 2)의 실근 개수를 추론 엔진으로 판정합니다.`,
+    expertRules: [
+      { id: '1', condition: 'D > 0', conclusion: '서로 다른 두 실근 (실근 2개)' },
+      { id: '2', condition: 'D == 0', conclusion: '중근 (실근 1개)' },
+      { id: '3', condition: 'D < 0', conclusion: '서로 다른 두 허근 (실근 0개)' },
+    ],
+    testFact: 'a = 2, b = -4, c = 2',
+    presetResult: {
+      algorithmTitle: '이차방정식 판별식(D) 실근 개수 판별 전문가시스템',
+      mermaid: `graph TD
+    A([시작]) --> B[/계수 a, b, c 입력 (a != 0)/]
+    B --> C[판별식 D = b^2 - 4*a*c 계산]
+    C --> D{"D > 0 ?"}
+    D -->|예 Yes| E[/서로 다른 두 실근 (2개) 출력/]
+    D -->|아니오 No| F{"D == 0 ?"}
+    F -->|예 Yes| G[/중근 (실근 1개) 출력/]
+    F -->|아니오 No| H[/서로 다른 두 허근 (실근 0개) 출력/]
+    E --> I([종료])
+    G --> I
+    H --> I`,
+      problemSummary: '이차방정식 ax^2 + bx + c = 0의 계수 a, b, c를 입력받아 판별식 D = b^2 - 4ac를 계산하고, 지식 베이스 규칙을 통해 실근의 개수를 논리적으로 판정하는 전문가시스템입니다.',
+      variables: [
+        { name: 'a, b, c', role: '이차방정식의 계수들', initialValue: 'a=2, b=-4, c=2' },
+        { name: 'D', role: '판별식 (Discriminant = b^2 - 4ac)', initialValue: '0' },
+        { name: 'result', role: '추론된 실근의 개수 및 형태', initialValue: '미정' },
+      ],
+      traceSteps: [
+        { stepNum: 1, iteration: '사실 입력', description: '이차방정식 계수 a=2, b=-4, c=2 입력', varStates: 'a = 2, b = -4, c = 2' },
+        { stepNum: 2, iteration: '판별식 연산', description: 'D = (-4)^2 - 4*(2)*(2) = 16 - 16 = 0 계산', varStates: 'D = 0' },
+        { stepNum: 3, iteration: '규칙 1 검사', description: 'D > 0 (0 > 0) 판단', varStates: 'D = 0', conditionResult: '거짓(False) -> 규칙 2 검사로 이동' },
+        { stepNum: 4, iteration: '규칙 2 검사', description: 'D == 0 (0 == 0) 판단', varStates: 'D = 0', conditionResult: '참(True) -> 규칙 2 충족 (중근, 1개)' },
+        { stepNum: 5, iteration: '결과 출력', description: "추론 결과 '중근 (실근 1개)' 출력 후 종료", varStates: "result = '중근 (실근 1개)'" },
+      ],
+      finalOutput: '판정 결과: 중근 (서로 같은 두 실근 1개, D = 0)',
+      mathConcept: '근의 공식 x = (-b ± √(b^2 - 4ac)) / (2a) 에서 루트 안의 식 D = b^2 - 4ac의 부호에 따라 실근의 개수가 결정되는 수학적 원리입니다. 수학의 판별식 정리를 인공지능 지식 베이스의 결정 트리(Decision Tree) 및 규칙 기반 추론 엔진으로 완벽히 매핑할 수 있습니다.',
+      quiz: {
+        question: '이차방정식 x^2 - 2x + 5 = 0 (a=1, b=-2, c=5)을 이 전문가시스템에 입력하면 판별식 D의 값과 최종 출력은 무엇일까요?',
+        options: [
+          'D = 16, 서로 다른 두 실근 (2개)',
+          'D = -16, 서로 다른 두 허근 (실근 0개)',
+          'D = 0, 중근 (1개)',
+          'D = -4, 서로 다른 두 실근 (2개)'
+        ],
+        answerIndex: 1,
+        explanation: 'D = (-2)^2 - 4*(1)*(5) = 4 - 20 = -16 < 0 이므로 규칙 3에 의해 실근 0개(서로 다른 두 허근)가 출력됩니다.',
+      },
+    },
+  },
+  {
+    id: 'expert_bloodtype',
+    title: '혈액형 항원 판정 전문가시스템',
+    category: '전문가시스템 & 규칙',
+    description: '교과서 본문 예제: A 항원과 B 항원의 유무 사실(Fact)과 지식 베이스 규칙을 결합한 혈액형(A, B, AB, O형) 추론',
+    story: `[전문가시스템 지식 베이스]
+규칙 1: IF (A 항원이 있다.) THEN (A형이다 OR AB형이다.)
+규칙 2: IF (B 항원이 있다.) THEN (B형이다 OR AB형이다.)
+규칙 3: IF (A 항원이 없다 AND B 항원이 없다.) THEN (O형이다.)
+
+[테스트 사실 (Fact)]
+사실 1: A 항원이 있다. (hasA = true)
+사실 2: B 항원이 있다. (hasB = true)
+를 입력하여 추론 엔진을 통해 혈액형을 판정합니다.`,
+    expertRules: [
+      { id: '1', condition: 'A 항원이 있다', conclusion: 'A형이다 OR AB형이다' },
+      { id: '2', condition: 'B 항원이 있다', conclusion: 'B형이다 OR AB형이다' },
+      { id: '3', condition: 'A 항원이 없다 AND B 항원이 없다', conclusion: 'O형이다' },
+    ],
+    testFact: 'A 항원 = 있음, B 항원 = 있음',
+    presetResult: {
+      algorithmTitle: '혈액형 항원 판정 전문가시스템',
+      mermaid: `graph TD
+    A([시작]) --> B[/항원 정보 입력: hasA, hasB/]
+    B --> C{"hasA == true ? (A 항원 있음)"}
+    C -->|예 Yes| D{"hasB == true ? (B 항원 있음)"}
+    C -->|아니오 No| E{"hasB == true ? (B 항원 있음)"}
+    D -->|예 Yes| F[/결과: AB형 출력/]
+    D -->|아니오 No| G[/결과: A형 출력/]
+    E -->|예 Yes| H[/결과: B형 출력/]
+    E -->|아니오 No| I[/결과: O형 출력/]
+    F --> J([종료])
+    G --> J
+    H --> J
+    I --> J`,
+      problemSummary: '적혈구 표면의 A 항원과 B 항원의 유무를 입력받아, 지식 베이스 규칙과 논리곱(AND)·논리합(OR) 연산을 거쳐 사용자의 최종 혈액형(A, B, AB, O형)을 도출하는 전문가시스템입니다.',
+      variables: [
+        { name: 'hasA', role: 'A 항원 존재 여부 (참/거짓)', initialValue: '참(True)' },
+        { name: 'hasB', role: 'B 항원 존재 여부 (참/거짓)', initialValue: '참(True)' },
+        { name: 'bloodType', role: '추론 엔진이 확정한 최종 혈액형', initialValue: '미정' },
+      ],
+      traceSteps: [
+        { stepNum: 1, iteration: '사실(Fact) 입력', description: 'A 항원=참, B 항원=참 입력', varStates: 'hasA = 참, hasB = 참' },
+        { stepNum: 2, iteration: '규칙 1 추론', description: '사실 1(hasA=참)과 규칙 1에 의해 -> A형 또는 AB형 후보군 압축', varStates: "후보: ['A형', 'AB형']", conditionResult: 'hasA == 참(True)' },
+        { stepNum: 3, iteration: '규칙 2 추론', description: '사실 2(hasB=참)과 규칙 2에 의해 -> B형 또는 AB형 후보군 압축', varStates: "후보: ['B형', 'AB형']", conditionResult: 'hasB == 참(True)' },
+        { stepNum: 4, iteration: '추론 엔진 결합', description: '규칙 1과 규칙 2의 교집합(AND) 판정 -> AB형 확정', varStates: "bloodType = 'AB형'" },
+        { stepNum: 5, iteration: '결과 출력', description: "최종 혈액형 'AB형' 출력 후 종료", varStates: "출력: 'AB형'" },
+      ],
+      finalOutput: '판정 결과: AB형 (A 항원과 B 항원이 모두 존재하므로 AB형 확정)',
+      mathConcept: '집합론(Set Theory)의 교집합과 명제 논리의 조건문 결합입니다. 규칙 1의 결과 집합 {A, AB}와 규칙 2의 결과 집합 {B, AB}의 교집합 {A, AB} ∩ {B, AB} = {AB}를 추론 엔진이 논리 연산으로 도출하는 인공지능 지식 표현의 전형적인 예시입니다.',
+      quiz: {
+        question: 'A 항원은 없고, B 항원만 있는 경우(hasA=거짓, hasB=참) 위 순서도가 도출하는 최종 혈액형은 무엇일까요?',
+        options: ['A형', 'B형', 'AB형', 'O형'],
+        answerIndex: 1,
+        explanation: "hasA가 거짓이므로 오른쪽 가지로 이동한 뒤 hasB가 참이므로 'B형'이 최종 출력됩니다.",
+      },
+    },
+  },
 ];
+
