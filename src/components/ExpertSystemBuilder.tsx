@@ -34,8 +34,11 @@ export const ExpertSystemBuilder: React.FC<ExpertSystemBuilderProps> = ({
   ]);
   const [testFact, setTestFact] = useState<string>("동물 x = '코끼리' (식물만 먹이로 함)");
 
+  const [isCustomMode, setIsCustomMode] = useState<boolean>(false);
+
   // Helper to load templates
   const handleLoadTemplate = (presetId: string) => {
+    setIsCustomMode(false);
     const preset = PRESET_EXAMPLES.find((p) => p.id === presetId);
     if (preset) {
       onSelectPreset(preset);
@@ -47,6 +50,16 @@ export const ExpertSystemBuilder: React.FC<ExpertSystemBuilderProps> = ({
         setTestFact(preset.testFact);
       }
     }
+  };
+
+  const handleStartCustomExpert = () => {
+    setIsCustomMode(true);
+    setSystemTitle('나만의 규칙 기반 전문가시스템');
+    setRules([
+      { id: '1', condition: '', conclusion: '' },
+      { id: '2', condition: '', conclusion: '' },
+    ]);
+    setTestFact('');
   };
 
   const handleAddRule = () => {
@@ -123,17 +136,38 @@ export const ExpertSystemBuilder: React.FC<ExpertSystemBuilderProps> = ({
         </div>
       </div>
 
-      {/* Textbook Quick Load Buttons */}
+      {/* Textbook Quick Load Buttons & Custom Builder Button */}
       <div className="flex flex-col gap-1.5">
-        <label className="text-xs font-semibold text-slate-700 flex items-center gap-1">
-          <BookOpen className="w-3.5 h-3.5 text-indigo-600" />
-          교과서 전문가시스템 예제 불러오기:
-        </label>
+        <div className="flex items-center justify-between">
+          <label className="text-xs font-semibold text-slate-700 flex items-center gap-1">
+            <BookOpen className="w-3.5 h-3.5 text-indigo-600" />
+            교과서 전문가시스템 예제 또는 직접 작성:
+          </label>
+
+          {/* Custom Reset Button */}
+          <button
+            type="button"
+            id="btn-custom-expert-mode"
+            onClick={handleStartCustomExpert}
+            className={`px-3 py-1 text-xs font-bold rounded-lg border transition flex items-center gap-1.5 shadow-2xs ${
+              isCustomMode
+                ? 'bg-amber-500 text-white border-amber-600 ring-2 ring-amber-200'
+                : 'bg-amber-50 hover:bg-amber-100 text-amber-900 border-amber-200'
+            }`}
+          >
+            <span>✍️ 나만의 전문가 규칙 새로 만들기</span>
+          </button>
+        </div>
+
         <div className="grid grid-cols-2 gap-1.5">
           <button
             type="button"
             onClick={() => handleLoadTemplate('expert_animals')}
-            className="p-2 bg-white hover:bg-indigo-50 border border-slate-200 hover:border-indigo-300 rounded-lg text-left transition flex items-center gap-2 group"
+            className={`p-2 rounded-lg text-left transition flex items-center gap-2 group border ${
+              !isCustomMode && systemTitle.includes('동물')
+                ? 'border-indigo-500 bg-indigo-50/70 ring-1 ring-indigo-400'
+                : 'bg-white hover:bg-indigo-50 border-slate-200'
+            }`}
           >
             <span className="text-sm">🦁</span>
             <div className="min-w-0">
@@ -146,7 +180,11 @@ export const ExpertSystemBuilder: React.FC<ExpertSystemBuilderProps> = ({
           <button
             type="button"
             onClick={() => handleLoadTemplate('expert_triangles')}
-            className="p-2 bg-white hover:bg-indigo-50 border border-slate-200 hover:border-indigo-300 rounded-lg text-left transition flex items-center gap-2 group"
+            className={`p-2 rounded-lg text-left transition flex items-center gap-2 group border ${
+              !isCustomMode && systemTitle.includes('삼각형')
+                ? 'border-indigo-500 bg-indigo-50/70 ring-1 ring-indigo-400'
+                : 'bg-white hover:bg-indigo-50 border-slate-200'
+            }`}
           >
             <span className="text-sm">📐</span>
             <div className="min-w-0">
@@ -159,7 +197,11 @@ export const ExpertSystemBuilder: React.FC<ExpertSystemBuilderProps> = ({
           <button
             type="button"
             onClick={() => handleLoadTemplate('expert_quadratic')}
-            className="p-2 bg-white hover:bg-indigo-50 border border-slate-200 hover:border-indigo-300 rounded-lg text-left transition flex items-center gap-2 group"
+            className={`p-2 rounded-lg text-left transition flex items-center gap-2 group border ${
+              !isCustomMode && systemTitle.includes('이차방정식')
+                ? 'border-indigo-500 bg-indigo-50/70 ring-1 ring-indigo-400'
+                : 'bg-white hover:bg-indigo-50 border-slate-200'
+            }`}
           >
             <span className="text-sm">🧮</span>
             <div className="min-w-0">
@@ -172,7 +214,11 @@ export const ExpertSystemBuilder: React.FC<ExpertSystemBuilderProps> = ({
           <button
             type="button"
             onClick={() => handleLoadTemplate('expert_bloodtype')}
-            className="p-2 bg-white hover:bg-indigo-50 border border-slate-200 hover:border-indigo-300 rounded-lg text-left transition flex items-center gap-2 group"
+            className={`p-2 rounded-lg text-left transition flex items-center gap-2 group border ${
+              !isCustomMode && systemTitle.includes('혈액형')
+                ? 'border-indigo-500 bg-indigo-50/70 ring-1 ring-indigo-400'
+                : 'bg-white hover:bg-indigo-50 border-slate-200'
+            }`}
           >
             <span className="text-sm">🩸</span>
             <div className="min-w-0">
@@ -187,15 +233,24 @@ export const ExpertSystemBuilder: React.FC<ExpertSystemBuilderProps> = ({
 
       {/* System Title */}
       <div className="flex flex-col gap-1">
-        <label className="text-xs font-semibold text-slate-700">
-          전문가시스템 목표/이름:
-        </label>
+        <div className="flex items-center justify-between">
+          <label className="text-xs font-semibold text-slate-700">
+            전문가시스템 목표/이름:
+          </label>
+          {isCustomMode && (
+            <span className="px-2 py-0.5 bg-amber-100 text-amber-800 text-[10px] font-bold rounded-full border border-amber-200">
+              ✍️ 사용자 직접 규칙 정의 모드
+            </span>
+          )}
+        </div>
         <input
           type="text"
           value={systemTitle}
           onChange={(e) => setSystemTitle(e.target.value)}
-          placeholder="예: 먹이에 따른 동물의 분류 전문가시스템"
-          className="w-full px-3 py-2 border border-slate-300 rounded-lg text-xs font-medium focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-white"
+          placeholder="예: 나만의 규칙 기반 전문가시스템"
+          className={`w-full px-3 py-2 border rounded-lg text-xs font-medium focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-white ${
+            isCustomMode ? 'border-amber-300 ring-1 ring-amber-200' : 'border-slate-300'
+          }`}
         />
       </div>
 

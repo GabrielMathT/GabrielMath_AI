@@ -107,10 +107,37 @@ export const MermaidViewer: React.FC<MermaidViewerProps> = ({ code, title }) => 
         if (isMounted) {
           setSvgContent(svg);
         }
+        return;
+      } catch (secondErr: any) {
+        console.warn('Sanitized Mermaid render failed, attempting simplified graph...', secondErr);
+      }
+
+      // Third attempt: Simplified safe flowchart parser
+      try {
+        const lines = cleanCode.split('\n').filter((l) => l.trim().length > 0 && !l.includes('graph') && !l.includes('flowchart'));
+        let safeFlow = 'graph TD\n    Start([시작]) --> Step1\n';
+        lines.forEach((l, idx) => {
+          const safeLine = l.replace(/[^\w\s가-힣=()><+-\/]/g, ' ').replace(/\s+/g, ' ').trim();
+          if (safeLine.length > 0) {
+            safeFlow += `    Step${idx + 1}["${safeLine.slice(0, 40)}"]\n`;
+            if (idx + 2 <= lines.length) {
+              safeFlow += `    Step${idx + 1} --> Step${idx + 2}\n`;
+            } else {
+              safeFlow += `    Step${idx + 1} --> Stop([종료])\n`;
+            }
+          }
+        });
+        if (!safeFlow.includes('Stop')) safeFlow += '    Step1 --> Stop([종료])\n';
+
+        const safeId = `mermaid-safe-${Math.random().toString(36).substring(2, 9)}`;
+        const { svg } = await mermaid.render(safeId, safeFlow);
+        if (isMounted) {
+          setSvgContent(svg);
+        }
       } catch (finalErr: any) {
         console.error('Final Mermaid render error:', finalErr);
         if (isMounted) {
-          setError('순서도 렌더링 중 문법 오류가 발생했습니다. 순서도 코드를 확인해주세요.');
+          setError('순서도 렌더링 중 오류가 발생했습니다. 입력 문장 구조를 확인해주세요.');
         }
       }
     };

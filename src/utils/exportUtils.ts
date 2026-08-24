@@ -2,7 +2,7 @@ import html2canvas from 'html2canvas';
 import { jsPDF } from 'jspdf';
 
 /**
- * Exports a given SVG element or container to a high-resolution PNG image.
+ * Exports a given SVG element or flowchart container to a high-resolution PNG image.
  */
 export async function downloadSvgAsPng(
   svgElement: SVGSVGElement | null,
@@ -12,67 +12,100 @@ export async function downloadSvgAsPng(
     throw new Error('순서도 SVG 요소를 찾을 수 없습니다.');
   }
 
-  // Clone SVG to avoid modifying the DOM
-  const svgClone = svgElement.cloneNode(true) as SVGSVGElement;
-  const bbox = svgElement.getBBox();
-  const width = Math.max(svgElement.clientWidth || bbox.width || 800, 600);
-  const height = Math.max(svgElement.clientHeight || bbox.height || 600, 400);
+  const container = svgElement.closest('#flowchart-container') || svgElement.parentElement;
 
-  // Set explicit dimensions and white background
-  svgClone.setAttribute('width', `${width}px`);
-  svgClone.setAttribute('height', `${height}px`);
-  svgClone.style.backgroundColor = '#ffffff';
+  try {
+    // Primary approach: Render SVG directly to Canvas with 2x High-DPI
+    const rect = svgElement.getBoundingClientRect();
+    const width = Math.max(Math.round(rect.width) || 800, 600);
+    const height = Math.max(Math.round(rect.height) || 600, 400);
 
-  const svgString = new XMLSerializer().serializeToString(svgClone);
-  const svgBlob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
-  const blobURL = URL.createObjectURL(svgBlob);
+    const svgClone = svgElement.cloneNode(true) as SVGSVGElement;
+    svgClone.setAttribute('width', `${width}px`);
+    svgClone.setAttribute('height', `${height}px`);
+    svgClone.style.backgroundColor = '#ffffff';
 
-  const image = new Image();
-  image.crossOrigin = 'anonymous';
+    const svgString = new XMLSerializer().serializeToString(svgClone);
+    const encodedSvg = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svgString);
 
-  return new Promise((resolve, reject) => {
-    image.onload = () => {
-      const scale = 2; // 2x DPI for ultra crisp quality
-      const canvas = document.createElement('canvas');
-      canvas.width = width * scale;
-      canvas.height = height * scale;
+    const image = new Image();
+    image.crossOrigin = 'anonymous';
 
-      const ctx = canvas.getContext('2d');
-      if (!ctx) {
-        reject(new Error('Canvas context not available'));
-        return;
-      }
+    await new Promise<void>((resolve, reject) => {
+      image.onload = () => {
+        try {
+          const scale = 2; // 2x DPI
+          const canvas = document.createElement('canvas');
+          canvas.width = width * scale;
+          canvas.height = height * scale;
 
-      // Draw white background
-      ctx.fillStyle = '#ffffff';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
+          const ctx = canvas.getContext('2d');
+          if (!ctx) {
+            throw new Error('Canvas 2D context not available');
+          }
 
-      ctx.scale(scale, scale);
-      ctx.drawImage(image, 0, 0, width, height);
+          // Crisp white background
+          ctx.fillStyle = '#ffffff';
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      canvas.toBlob((blob) => {
-        if (blob) {
-          const downloadLink = document.createElement('a');
-          downloadLink.download = fileName.endsWith('.png') ? fileName : `${fileName}.png`;
-          downloadLink.href = URL.createObjectURL(blob);
-          document.body.appendChild(downloadLink);
-          downloadLink.click();
-          document.body.removeChild(downloadLink);
-          URL.revokeObjectURL(blobURL);
-          resolve();
-        } else {
-          reject(new Error('PNG 변환에 실패했습니다.'));
+          ctx.scale(scale, scale);
+          ctx.drawImage(image, 0, 0, width, height);
+
+          canvas.toBlob((blob) => {
+            if (blob) {
+              const url = URL.createObjectURL(blob);
+              const downloadLink = document.createElement('a');
+              downloadLink.download = fileName.endsWith('.png') ? fileName : `${fileName}.png`;
+              downloadLink.href = url;
+              document.body.appendChild(downloadLink);
+              downloadLink.click();
+              document.body.removeChild(downloadLink);
+              setTimeout(() => URL.revokeObjectURL(url), 1000);
+              resolve();
+            } else {
+              reject(new Error('PNG Blob 생성 실패'));
+            }
+          }, 'image/png');
+        } catch (e) {
+          reject(e);
         }
-      }, 'image/png');
-    };
+      };
 
-    image.onerror = (err) => {
-      URL.revokeObjectURL(blobURL);
-      reject(err);
-    };
+      image.onerror = (err) => {
+        reject(err);
+      };
 
-    image.src = blobURL;
-  });
+      image.src = encodedSvg;
+    });
+  } catch (directSvgErr) {
+    console.warn('Direct SVG canvas render failed, falling back to html2canvas:', directSvgErr);
+
+    // Secondary fallback: Use html2canvas on container
+    if (container) {
+      const canvas = await html2canvas(container as HTMLElement, {
+        scale: 2,
+        useCORS: true,
+        backgroundColor: '#ffffff',
+        logging: false,
+      });
+
+      const blob = await new Promise<Blob | null>((res) => canvas.toBlob(res, 'image/png'));
+      if (blob) {
+        const url = URL.createObjectURL(blob);
+        const downloadLink = document.createElement('a');
+        downloadLink.download = fileName.endsWith('.png') ? fileName : `${fileName}.png`;
+        downloadLink.href = url;
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+        document.body.removeChild(downloadLink);
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+      } else {
+        throw new Error('html2canvas PNG 변환에 실패했습니다.');
+      }
+    } else {
+      throw directSvgErr;
+    }
+  }
 }
 
 /**
@@ -84,16 +117,16 @@ export async function exportWorksheetToPdf(
 ): Promise<void> {
   const targetElement = document.getElementById(elementId);
   if (!targetElement) {
-    throw new Error('PDF로 변환할 요소를 찾을 수 없습니다.');
+    throw new Error('PDF로 변환할 활동지 요소를 찾을 수 없습니다.');
   }
 
-  // Temporary styling adjustments for print
+  // Ensure styles and layout are computed
   const canvas = await html2canvas(targetElement, {
-    scale: 2, // High resolution
+    scale: 2, // High resolution crisp text
     useCORS: true,
     backgroundColor: '#ffffff',
     logging: false,
-    windowWidth: targetElement.scrollWidth,
+    windowWidth: 800,
   });
 
   const imgData = canvas.toDataURL('image/jpeg', 0.95);
@@ -101,23 +134,25 @@ export async function exportWorksheetToPdf(
   const pdfWidth = pdf.internal.pageSize.getWidth(); // 210mm
   const pdfHeight = pdf.internal.pageSize.getHeight(); // 297mm
 
-  const imgWidth = pdfWidth - 20; // 10mm margins on sides
-  const imgHeight = (canvas.height * imgWidth) / canvas.width;
+  const margin = 10; // 10mm margins
+  const contentWidth = pdfWidth - (margin * 2); // 190mm
+  const contentHeight = (canvas.height * contentWidth) / canvas.width;
 
-  let heightLeft = imgHeight;
-  let position = 10; // 10mm top margin
+  let heightLeft = contentHeight;
+  let position = margin;
 
   // First page
-  pdf.addImage(imgData, 'JPEG', 10, position, imgWidth, imgHeight, undefined, 'FAST');
-  heightLeft -= (pdfHeight - 20);
+  pdf.addImage(imgData, 'JPEG', margin, position, contentWidth, contentHeight, undefined, 'FAST');
+  heightLeft -= (pdfHeight - (margin * 2));
 
   // If content spans multiple pages
   while (heightLeft > 0) {
-    position = heightLeft - imgHeight + 10;
+    position = heightLeft - contentHeight + margin;
     pdf.addPage();
-    pdf.addImage(imgData, 'JPEG', 10, position, imgWidth, imgHeight, undefined, 'FAST');
-    heightLeft -= (pdfHeight - 20);
+    pdf.addImage(imgData, 'JPEG', margin, position, contentWidth, contentHeight, undefined, 'FAST');
+    heightLeft -= (pdfHeight - (margin * 2));
   }
 
   pdf.save(fileName.endsWith('.pdf') ? fileName : `${fileName}.pdf`);
 }
+

@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { PRESET_EXAMPLES } from '../data/presets';
 import { PresetExample } from '../types';
 import { ExpertSystemBuilder } from './ExpertSystemBuilder';
-import { Play, Sparkles, BookOpen, Trash2, PlusCircle, Brain, FileText, Lightbulb } from 'lucide-react';
+import { GuidedAlgorithmBuilder } from './GuidedAlgorithmBuilder';
+import { Play, Sparkles, BookOpen, Trash2, PlusCircle, Brain, FileText, Lightbulb, Sliders } from 'lucide-react';
 
 interface StoryInputFormProps {
   story: string;
@@ -21,7 +22,7 @@ export const StoryInputForm: React.FC<StoryInputFormProps> = ({
   isLoading,
   selectedPresetId,
 }) => {
-  const [inputMode, setInputMode] = useState<'story' | 'expert'>('story');
+  const [inputMode, setInputMode] = useState<'story' | 'guided' | 'expert'>('story');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
 
   const categories = ['all', '전문가시스템 & 규칙', '기초 반복/누적', '수열과 점화식', '탐색과 최적화', '인공지능 핵심'];
@@ -32,6 +33,13 @@ export const StoryInputForm: React.FC<StoryInputFormProps> = ({
 
   const handleInsertSnippet = (snippet: string) => {
     setStory(story ? `${story.trim()}\n${snippet}` : snippet);
+  };
+
+  const handleGenerateFromGuided = (storyText: string) => {
+    setStory(storyText);
+    setTimeout(() => {
+      onGenerate();
+    }, 50);
   };
 
   const handleGenerateFromExpertRules = (storyText: string) => {
@@ -63,32 +71,45 @@ export const StoryInputForm: React.FC<StoryInputFormProps> = ({
           )}
         </div>
 
-        {/* Input Mode Selector Tabs */}
-        <div className="grid grid-cols-2 gap-1 bg-slate-100 p-1 rounded-xl">
+        {/* Input Mode Selector Tabs (3 Modes) */}
+        <div className="grid grid-cols-3 gap-1 bg-slate-100 p-1 rounded-xl">
           <button
             type="button"
             onClick={() => setInputMode('story')}
-            className={`flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg text-xs font-bold transition ${
+            className={`flex items-center justify-center gap-1.5 py-2 px-2.5 rounded-lg text-xs font-bold transition ${
               inputMode === 'story'
                 ? 'bg-white text-indigo-700 shadow-xs'
                 : 'text-slate-600 hover:text-slate-900'
             }`}
           >
             <FileText className="w-3.5 h-3.5" />
-            <span>자연어 수학 알고리즘</span>
+            <span className="truncate">자연어 문장 입력</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setInputMode('guided')}
+            className={`flex items-center justify-center gap-1.5 py-2 px-2.5 rounded-lg text-xs font-bold transition ${
+              inputMode === 'guided'
+                ? 'bg-amber-500 text-white shadow-xs'
+                : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/60'
+            }`}
+          >
+            <Sliders className="w-3.5 h-3.5" />
+            <span className="truncate">📐 4단계 구조화 가이드</span>
           </button>
 
           <button
             type="button"
             onClick={() => setInputMode('expert')}
-            className={`flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg text-xs font-bold transition ${
+            className={`flex items-center justify-center gap-1.5 py-2 px-2.5 rounded-lg text-xs font-bold transition ${
               inputMode === 'expert'
                 ? 'bg-indigo-600 text-white shadow-xs'
                 : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/60'
             }`}
           >
             <Brain className="w-3.5 h-3.5" />
-            <span>🧠 전문가시스템 규칙 빌더</span>
+            <span className="truncate">🧠 전문가시스템</span>
           </button>
         </div>
       </div>
@@ -100,6 +121,12 @@ export const StoryInputForm: React.FC<StoryInputFormProps> = ({
           isLoading={isLoading}
           onSelectPreset={onSelectPreset}
         />
+      ) : inputMode === 'guided' ? (
+        /* Guided Step-by-Step Structure Builder */
+        <GuidedAlgorithmBuilder
+          onGenerateFromSteps={handleGenerateFromGuided}
+          isLoading={isLoading}
+        />
       ) : (
         /* Standard Story Input Mode */
         <>
@@ -110,6 +137,55 @@ export const StoryInputForm: React.FC<StoryInputFormProps> = ({
                 <BookOpen className="w-3.5 h-3.5 text-indigo-600" />
                 교과서 & AI 수학 추천 예제 선택:
               </label>
+
+              {/* Explicit Custom Input Button */}
+              <button
+                type="button"
+                id="btn-custom-story-mode"
+                onClick={() => {
+                  onSelectPreset({
+                    id: '',
+                    title: '나만의 수학 알고리즘 직접 작성',
+                    category: '기초 반복/누적',
+                    description: '사용자가 직접 입력한 맞춤형 수학 알고리즘',
+                    story: '',
+                    presetResult: {
+                      algorithmTitle: '나만의 수학 알고리즘',
+                      mermaid: `graph TD\n    Start([시작]) --> Input[/"수학 문제 상황 입력"/]\n    Input --> Process["수학 연산 및 조건 처리"]\n    Process --> Output[/"결과 출력"/]\n    Output --> Stop([종료])`,
+                      problemSummary: '직접 입력한 수학 문제 상황에 대한 알고리즘입니다. 문장을 작성한 후 [순서도 생성 및 시뮬레이션 시작]을 클릭하세요.',
+                      variables: [
+                        { name: 'N', role: '상태 또는 제어 변수', initialValue: '0' },
+                        { name: 'S', role: '연산 결과 누적 변수', initialValue: '0' },
+                      ],
+                      traceSteps: [
+                        {
+                          stepNum: 1,
+                          iteration: '작성 대기',
+                          description: '수학 상황을 입력하고 [순서도 생성 및 시뮬레이션 시작]을 클릭하여 분석을 시작합니다.',
+                          varStates: 'N=0, S=0',
+                          conditionResult: '준비 완료',
+                        },
+                      ],
+                      finalOutput: '순서도 생성을 실행하면 최종 계산 결과가 표시됩니다.',
+                      mathConcept: '자연어로 기술된 수학적 문제 상황을 변수, 조건 판단, 반복 구조로 분해하여 절차적 알고리즘으로 설계하는 인공지능 수학 기본 역량입니다.',
+                      quiz: {
+                        question: '알고리즘을 표준 순서도로 시각화할 때 얻을 수 있는 가장 중요한 이점은 무엇인가요?',
+                        options: ['문제 해결 절차와 조건 분기 흐름을 직관적·구조적으로 파악', '하드웨어 연산 속도 즉시 증대', '변수 선언 절차 생략 가능', '컴퓨터 전원 절약'],
+                        answerIndex: 0,
+                        explanation: '순서도는 복잡한 논리적 절차와 조건 판단을 표준화된 도형 기호로 나타내어 누구나 알고리즘의 동작을 명확히 이해하고 검증할 수 있도록 돕습니다.',
+                      },
+                    },
+                  });
+                  setStory('');
+                }}
+                className={`px-3 py-1 text-xs font-bold rounded-lg border transition flex items-center gap-1.5 shadow-2xs ${
+                  !selectedPresetId
+                    ? 'bg-amber-500 text-white border-amber-600 ring-2 ring-amber-200'
+                    : 'bg-amber-50 hover:bg-amber-100 text-amber-900 border-amber-200'
+                }`}
+              >
+                <span>✍️ 나만의 수학 상황 직접 작성</span>
+              </button>
             </div>
 
             {/* Category Pills */}
@@ -164,21 +240,30 @@ export const StoryInputForm: React.FC<StoryInputFormProps> = ({
 
           {/* Story Textarea */}
           <div className="flex flex-col gap-1.5">
-            <label htmlFor="storyInput" className="text-xs font-semibold text-slate-700 flex items-center justify-between">
-              <span>직접 수학 상황 설명 작성 (자연어 / 한글):</span>
-              <span className="text-[11px] font-normal text-slate-400">자유로운 문장 또는 IF-THEN 규칙</span>
-            </label>
+            <div className="flex items-center justify-between">
+              <label htmlFor="storyInput" className="text-xs font-semibold text-slate-700 flex items-center gap-1.5">
+                <span>직접 수학 상황 설명 작성 (자연어 / 한글):</span>
+                {!selectedPresetId && (
+                  <span className="px-2 py-0.5 bg-amber-100 text-amber-800 text-[10px] font-bold rounded-full border border-amber-200">
+                    ✍️ 사용자 직접 작성 모드
+                  </span>
+                )}
+              </label>
+              <span className="text-[11px] font-normal text-slate-400">자유로운 수학 문장 또는 순서 단계</span>
+            </div>
             <textarea
               id="storyInput"
               rows={6}
               value={story}
               onChange={(e) => setStory(e.target.value)}
-              placeholder={`[입력 예시]
-1. N에 0, S에 0을 입력(초기화)합니다.
-2. N에 N+2를 대입하고, S에 S+N을 대입합니다.
+              placeholder={`[직접 작성 예시]
+1. N에 0, S에 0을 초깃값으로 설정합니다.
+2. N에 N+2를 대입하고, S에 S+N을 누적합니다.
 3. N이 20인지 판단하여, 20이 아니면 2번 과정으로 돌아가고,
-4. 20이 되면 S를 출력하고 프로그램을 마칩니다.`}
-              className="w-full p-3.5 border border-slate-300 rounded-xl text-xs font-sans leading-relaxed focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-white"
+4. 20이 되면 최종 누적합 S를 출력하고 종료합니다.`}
+              className={`w-full p-3.5 border rounded-xl text-xs font-sans leading-relaxed focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white ${
+                !selectedPresetId ? 'border-amber-300 ring-1 ring-amber-200' : 'border-slate-300'
+              }`}
             />
           </div>
 

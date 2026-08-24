@@ -9,10 +9,21 @@ interface TraceSimulatorProps {
 }
 
 export const TraceSimulator: React.FC<TraceSimulatorProps> = ({
-  steps,
-  variables,
-  finalOutput,
+  steps = [],
+  variables = [],
+  finalOutput = '',
 }) => {
+  const safeSteps = Array.isArray(steps) && steps.length > 0 ? steps : [
+    {
+      stepNum: 1,
+      iteration: '1. 준비 단계',
+      description: '알고리즘을 준비하고 시작합니다.',
+      varStates: '대기 중',
+      conditionResult: '준비 완료'
+    }
+  ];
+  const safeVariables = Array.isArray(variables) ? variables : [];
+
   const [currentStepIndex, setCurrentStepIndex] = useState<number>(0);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [speed, setSpeed] = useState<number>(1000); // ms
@@ -29,7 +40,7 @@ export const TraceSimulator: React.FC<TraceSimulatorProps> = ({
     if (isPlaying) {
       timer = setInterval(() => {
         setCurrentStepIndex((prev) => {
-          if (prev >= steps.length - 1) {
+          if (prev >= safeSteps.length - 1) {
             setIsPlaying(false);
             return prev;
           }
@@ -40,10 +51,10 @@ export const TraceSimulator: React.FC<TraceSimulatorProps> = ({
     return () => {
       if (timer) clearInterval(timer);
     };
-  }, [isPlaying, speed, steps.length]);
+  }, [isPlaying, speed, safeSteps.length]);
 
   const handleNext = () => {
-    if (currentStepIndex < steps.length - 1) {
+    if (currentStepIndex < safeSteps.length - 1) {
       setCurrentStepIndex((prev) => prev + 1);
     }
   };
@@ -59,8 +70,8 @@ export const TraceSimulator: React.FC<TraceSimulatorProps> = ({
     setCurrentStepIndex(0);
   };
 
-  const currentStep = steps[currentStepIndex] || steps[0];
-  const isFinished = currentStepIndex === steps.length - 1;
+  const currentStep = safeSteps[currentStepIndex] || safeSteps[0];
+  const isFinished = currentStepIndex === safeSteps.length - 1;
 
   return (
     <div id="trace-simulator" className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden flex flex-col">
@@ -146,7 +157,7 @@ export const TraceSimulator: React.FC<TraceSimulatorProps> = ({
             <div className="flex items-center gap-2">
               <span className="font-semibold text-slate-800 text-sm">{currentStep.iteration}</span>
               <span className="text-[11px] px-2 py-0.5 rounded bg-indigo-100 text-indigo-700 font-medium font-mono">
-                Step {currentStep.stepNum || currentStepIndex + 1} / {steps.length}
+                Step {currentStep.stepNum || currentStepIndex + 1} / {safeSteps.length}
               </span>
             </div>
             <p className="text-xs text-slate-600 mt-0.5">{currentStep.description}</p>
@@ -181,7 +192,7 @@ export const TraceSimulator: React.FC<TraceSimulatorProps> = ({
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-200">
-            {steps.map((step, idx) => {
+            {safeSteps.map((step, idx) => {
               const isCurrent = idx === currentStepIndex;
               const isPast = idx < currentStepIndex;
               return (
@@ -218,7 +229,7 @@ export const TraceSimulator: React.FC<TraceSimulatorProps> = ({
         <div className="flex-1">
           <h4 className="text-xs font-bold text-slate-600 mb-1.5">사용된 변수 명세:</h4>
           <div className="flex flex-wrap gap-2">
-            {variables.map((v, i) => (
+            {safeVariables.map((v, i) => (
               <div key={i} className="bg-white border border-slate-200 px-2.5 py-1 rounded text-xs">
                 <span className="font-mono font-bold text-indigo-600">{v.name}</span>
                 <span className="text-slate-500 text-[11px] ml-1.5">({v.role} / 초깃값: {v.initialValue})</span>

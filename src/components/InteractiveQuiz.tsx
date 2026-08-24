@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import confetti from 'canvas-confetti';
 import { HelpCircle, CheckCircle, XCircle, Award, Sparkles, RefreshCw } from 'lucide-react';
 import { Quiz } from '../types';
@@ -10,6 +10,12 @@ interface InteractiveQuizProps {
 export const InteractiveQuiz: React.FC<InteractiveQuizProps> = ({ quiz }) => {
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
+
+  // Automatically reset quiz state whenever a new quiz object is provided
+  useEffect(() => {
+    setSelectedOption(null);
+    setIsSubmitted(false);
+  }, [quiz]);
 
   const handleSelect = (index: number) => {
     if (isSubmitted) return;

@@ -252,11 +252,22 @@ export const StudentReflection: React.FC<StudentReflectionProps> = ({
         </div>
       </div>
 
-      {/* Hidden/Printable Dedicated PDF Worksheet Template Container */}
-      <div className="overflow-hidden h-0 w-0 pointer-events-none opacity-0">
+      {/* Hidden Dedicated PDF Worksheet Template Container (Rendered offscreen with fixed 800px width for html2canvas) */}
+      <div
+        style={{
+          position: 'fixed',
+          left: '-9999px',
+          top: 0,
+          width: '800px',
+          zIndex: -999,
+          opacity: 1,
+          pointerEvents: 'none',
+          backgroundColor: '#ffffff',
+        }}
+      >
         <div
           id="pdf-export-worksheet"
-          className="p-8 bg-white text-slate-900 font-sans max-w-[800px] mx-auto border border-slate-200"
+          className="p-8 bg-white text-slate-900 font-sans border border-slate-200"
           style={{ width: '800px', backgroundColor: '#ffffff' }}
         >
           {/* Header */}
@@ -286,11 +297,11 @@ export const StudentReflection: React.FC<StudentReflectionProps> = ({
             </p>
           </div>
 
-          {/* Section 2: Flowchart Diagram & Variable Table */}
+          {/* Section 2: Flowchart Code & Variable Table */}
           <div className="mb-6 grid grid-cols-1 gap-4">
             <div className="border border-slate-200 rounded-lg p-3 bg-white">
               <h2 className="font-bold text-slate-900 text-xs mb-2 flex items-center gap-1.5">
-                <span>🔄 2. 생성된 표준 순서도 (Flowchart)</span>
+                <span>🔄 2. 생성된 표준 순서도 (Mermaid Graph 코드)</span>
               </h2>
               <pre className="p-3 bg-slate-50 rounded text-[10px] font-mono text-slate-700 border border-slate-200 whitespace-pre-wrap leading-tight">
                 {result.mermaid}
@@ -298,7 +309,7 @@ export const StudentReflection: React.FC<StudentReflectionProps> = ({
             </div>
 
             <div className="border border-slate-200 rounded-lg p-3 bg-slate-50/50 text-xs">
-              <h3 className="font-bold text-slate-800 mb-2">📊 변수 명세 및 최종 결과</h3>
+              <h3 className="font-bold text-slate-800 mb-2">📊 변수 명세 및 최종 예측 결과</h3>
               <div className="grid grid-cols-2 gap-2 mb-2">
                 {result.variables.map((v, i) => (
                   <div key={i} className="bg-white p-2 rounded border border-slate-200 text-[11px]">
@@ -328,7 +339,7 @@ export const StudentReflection: React.FC<StudentReflectionProps> = ({
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-200 text-slate-800">
-                {result.traceSteps.slice(0, 10).map((step, idx) => (
+                {result.traceSteps.slice(0, 12).map((step, idx) => (
                   <tr key={idx} className={idx % 2 === 0 ? 'bg-white' : 'bg-slate-50'}>
                     <td className="py-1 px-2 text-center border-r border-slate-300">{idx + 1}</td>
                     <td className="py-1 px-2 border-r border-slate-300 font-medium">{step.iteration}</td>

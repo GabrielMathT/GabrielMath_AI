@@ -52,7 +52,9 @@ export default function App() {
   const handleSelectPreset = (preset: PresetExample) => {
     setSelectedPreset(preset);
     setStory(preset.story);
-    setResult(preset.presetResult);
+    if (preset.presetResult) {
+      setResult(preset.presetResult);
+    }
     setError(null);
   };
 
