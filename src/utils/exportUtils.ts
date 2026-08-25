@@ -109,7 +109,8 @@ export async function downloadSvgAsPng(
 }
 
 /**
- * Exports the worksheet container (with reflection note, flowchart, trace table) to a polished PDF document.
+ * Exports the worksheet container to a crisp, high-resolution multi-page PDF document.
+ * Slices the canvas page by page so all text, long prompts, and tables fit without truncation.
  */
 export async function exportWorksheetToPdf(
   elementId: string,
@@ -120,39 +121,79 @@ export async function exportWorksheetToPdf(
     throw new Error('PDF로 변환할 활동지 요소를 찾을 수 없습니다.');
   }
 
-  // Ensure styles and layout are computed
+  // Render high-DPI canvas
   const canvas = await html2canvas(targetElement, {
-    scale: 2, // High resolution crisp text
+    scale: 2, // 2x resolution for super crisp text
     useCORS: true,
     backgroundColor: '#ffffff',
     logging: false,
     windowWidth: 800,
   });
 
-  const imgData = canvas.toDataURL('image/jpeg', 0.95);
   const pdf = new jsPDF('p', 'mm', 'a4');
   const pdfWidth = pdf.internal.pageSize.getWidth(); // 210mm
   const pdfHeight = pdf.internal.pageSize.getHeight(); // 297mm
 
   const margin = 10; // 10mm margins
   const contentWidth = pdfWidth - (margin * 2); // 190mm
-  const contentHeight = (canvas.height * contentWidth) / canvas.width;
+  const pageAvailableHeightMm = pdfHeight - (margin * 2); // 277mm
 
-  let heightLeft = contentHeight;
-  let position = margin;
+  // Calculate slice height in canvas pixels matching pageAvailableHeightMm
+  const pxPerMm = canvas.width / contentWidth;
+  const pageSliceHeightPx = Math.floor(pageAvailableHeightMm * pxPerMm);
 
-  // First page
-  pdf.addImage(imgData, 'JPEG', margin, position, contentWidth, contentHeight, undefined, 'FAST');
-  heightLeft -= (pdfHeight - (margin * 2));
+  let currentSourceY = 0;
+  let pageIndex = 0;
 
-  // If content spans multiple pages
-  while (heightLeft > 0) {
-    position = heightLeft - contentHeight + margin;
-    pdf.addPage();
-    pdf.addImage(imgData, 'JPEG', margin, position, contentWidth, contentHeight, undefined, 'FAST');
-    heightLeft -= (pdfHeight - (margin * 2));
+  while (currentSourceY < canvas.height) {
+    const sliceHeightPx = Math.min(pageSliceHeightPx, canvas.height - currentSourceY);
+    const sliceHeightMm = sliceHeightPx / pxPerMm;
+
+    // Create a temporary canvas slice for this page
+    const pageCanvas = document.createElement('canvas');
+    pageCanvas.width = canvas.width;
+    pageCanvas.height = sliceHeightPx;
+
+    const ctx = pageCanvas.getContext('2d');
+    if (ctx) {
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, pageCanvas.width, pageCanvas.height);
+      ctx.drawImage(
+        canvas,
+        0, currentSourceY, canvas.width, sliceHeightPx, // source
+        0, 0, canvas.width, sliceHeightPx // dest
+      );
+
+      const pageImgData = pageCanvas.toDataURL('image/jpeg', 0.95);
+
+      if (pageIndex > 0) {
+        pdf.addPage();
+      }
+
+      pdf.addImage(
+        pageImgData,
+        'JPEG',
+        margin,
+        margin,
+        contentWidth,
+        sliceHeightMm,
+        undefined,
+        'FAST'
+      );
+    }
+
+    currentSourceY += sliceHeightPx;
+    pageIndex++;
   }
 
   pdf.save(fileName.endsWith('.pdf') ? fileName : `${fileName}.pdf`);
 }
+
+/**
+ * Triggers standard browser print dialog for the worksheet.
+ */
+export function printWorksheet(): void {
+  window.print();
+}
+
 

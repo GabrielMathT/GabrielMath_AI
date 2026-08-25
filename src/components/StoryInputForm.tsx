@@ -3,7 +3,7 @@ import { PRESET_EXAMPLES } from '../data/presets';
 import { PresetExample } from '../types';
 import { ExpertSystemBuilder } from './ExpertSystemBuilder';
 import { GuidedAlgorithmBuilder } from './GuidedAlgorithmBuilder';
-import { Play, Sparkles, BookOpen, Trash2, PlusCircle, Brain, FileText, Lightbulb, Sliders } from 'lucide-react';
+import { Sparkles, BookOpen, Trash2, PlusCircle, Brain, FileText, Sliders, Type, Maximize2, Minimize2 } from 'lucide-react';
 
 interface StoryInputFormProps {
   story: string;
@@ -24,6 +24,8 @@ export const StoryInputForm: React.FC<StoryInputFormProps> = ({
 }) => {
   const [inputMode, setInputMode] = useState<'story' | 'guided' | 'expert'>('story');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [fontSizeMode, setFontSizeMode] = useState<'sm' | 'base' | 'lg'>('base');
+  const [isExpanded, setIsExpanded] = useState(false);
 
   const categories = ['all', '전문가시스템 & 규칙', '기초 반복/누적', '수열과 점화식', '탐색과 최적화', '인공지능 핵심'];
 
@@ -49,6 +51,15 @@ export const StoryInputForm: React.FC<StoryInputFormProps> = ({
     }, 50);
   };
 
+  const editorFontSizeClass =
+    fontSizeMode === 'sm'
+      ? 'text-[11px]'
+      : fontSizeMode === 'lg'
+      ? 'text-sm'
+      : 'text-xs';
+
+  const lineCount = story ? story.split('\n').length : 0;
+
   return (
     <div id="story-input-card" className="bg-white rounded-xl border border-slate-200 shadow-sm p-5 flex flex-col gap-4">
       {/* Step Header & Mode Switcher */}
@@ -66,7 +77,7 @@ export const StoryInputForm: React.FC<StoryInputFormProps> = ({
               onClick={() => setStory('')}
               className="flex items-center gap-1 text-xs text-slate-400 hover:text-rose-600 transition"
             >
-              <Trash2 className="w-3.5 h-3.5" /> 지우기
+              <Trash2 className="w-3.5 h-3.5" /> 전체 지우기
             </button>
           )}
         </div>
@@ -238,9 +249,9 @@ export const StoryInputForm: React.FC<StoryInputFormProps> = ({
             </div>
           </div>
 
-          {/* Story Textarea */}
+          {/* Story Textarea Header with Font Size and Expand Controls */}
           <div className="flex flex-col gap-1.5">
-            <div className="flex items-center justify-between">
+            <div className="flex flex-wrap items-center justify-between gap-2">
               <label htmlFor="storyInput" className="text-xs font-semibold text-slate-700 flex items-center gap-1.5">
                 <span>직접 수학 상황 설명 작성 (자연어 / 한글):</span>
                 {!selectedPresetId && (
@@ -249,11 +260,57 @@ export const StoryInputForm: React.FC<StoryInputFormProps> = ({
                   </span>
                 )}
               </label>
-              <span className="text-[11px] font-normal text-slate-400">자유로운 수학 문장 또는 순서 단계</span>
+
+              {/* View/Font size toolbar for Story Input */}
+              <div className="flex items-center gap-2">
+                <div className="inline-flex bg-slate-100 border border-slate-200 rounded-md p-0.5">
+                  <span className="px-1.5 py-0.5 text-[10px] text-slate-500 flex items-center gap-1">
+                    <Type className="w-3 h-3" /> 글씨:
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setFontSizeMode('sm')}
+                    className={`px-1.5 py-0.5 text-[10px] font-medium rounded ${
+                      fontSizeMode === 'sm' ? 'bg-indigo-600 text-white' : 'text-slate-600 hover:text-slate-900'
+                    }`}
+                  >
+                    작게
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setFontSizeMode('base')}
+                    className={`px-1.5 py-0.5 text-[10px] font-medium rounded ${
+                      fontSizeMode === 'base' ? 'bg-indigo-600 text-white' : 'text-slate-600 hover:text-slate-900'
+                    }`}
+                  >
+                    보통
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setFontSizeMode('lg')}
+                    className={`px-1.5 py-0.5 text-[10px] font-medium rounded ${
+                      fontSizeMode === 'lg' ? 'bg-indigo-600 text-white' : 'text-slate-600 hover:text-slate-900'
+                    }`}
+                  >
+                    크게
+                  </button>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => setIsExpanded(!isExpanded)}
+                  className="flex items-center gap-1 text-[11px] text-slate-500 hover:text-indigo-600 transition"
+                  title="입력창을 넓게 펼칩니다."
+                >
+                  {isExpanded ? <Minimize2 className="w-3 h-3" /> : <Maximize2 className="w-3 h-3" />}
+                  <span>{isExpanded ? '기본' : '펼치기'}</span>
+                </button>
+              </div>
             </div>
+
             <textarea
               id="storyInput"
-              rows={6}
+              rows={isExpanded ? 10 : 6}
               value={story}
               onChange={(e) => setStory(e.target.value)}
               placeholder={`[직접 작성 예시]
@@ -261,10 +318,16 @@ export const StoryInputForm: React.FC<StoryInputFormProps> = ({
 2. N에 N+2를 대입하고, S에 S+N을 누적합니다.
 3. N이 20인지 판단하여, 20이 아니면 2번 과정으로 돌아가고,
 4. 20이 되면 최종 누적합 S를 출력하고 종료합니다.`}
-              className={`w-full p-3.5 border rounded-xl text-xs font-sans leading-relaxed focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white ${
+              className={`w-full p-3.5 border rounded-xl font-sans ${editorFontSizeClass} leading-relaxed focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white resize-y break-words whitespace-pre-wrap ${
                 !selectedPresetId ? 'border-amber-300 ring-1 ring-amber-200' : 'border-slate-300'
               }`}
             />
+
+            {/* Character & Line info */}
+            <div className="flex items-center justify-between text-[11px] text-slate-400 px-1">
+              <span>긴 문장이나 여러 조건도 빠짐없이 입력하실 수 있습니다.</span>
+              <span className="font-mono">{story.length}자 ({lineCount}줄)</span>
+            </div>
           </div>
 
           {/* Quick Snippet Chips */}
@@ -325,3 +388,4 @@ export const StoryInputForm: React.FC<StoryInputFormProps> = ({
     </div>
   );
 };
+

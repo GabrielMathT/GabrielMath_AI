@@ -33,7 +33,7 @@ export const ConceptExplainer: React.FC<ConceptExplainerProps> = ({
             <Target className="w-4 h-4 text-indigo-600" />
             <span>수학적 문제 정의 및 알고리즘 개요</span>
           </div>
-          <p className="text-xs text-slate-600 leading-relaxed">{problemSummary}</p>
+          <p className="text-xs text-slate-700 leading-relaxed whitespace-pre-wrap break-words">{problemSummary}</p>
         </div>
 
         {/* Math & AI Connection */}
@@ -42,7 +42,7 @@ export const ConceptExplainer: React.FC<ConceptExplainerProps> = ({
             <Cpu className="w-4 h-4 text-indigo-600" />
             <span>인공지능 수학 핵심 개념 (Mathematical Principle & AI Connection)</span>
           </div>
-          <p className="text-xs text-indigo-950 leading-relaxed whitespace-pre-wrap">{mathConcept}</p>
+          <p className="text-xs text-indigo-950 leading-relaxed whitespace-pre-wrap break-words">{mathConcept}</p>
         </div>
 
         {/* High School AI Math TIP */}

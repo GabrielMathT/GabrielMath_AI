@@ -29,3 +29,41 @@
 .animate-fadeIn {
   animation: fadeIn 0.25s ease-out forwards;
 }
+
+/* Print specific styles for flawless A4 output */
+@media print {
+  body {
+    background: #ffffff !important;
+    color: #000000 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  /* Hide app navigation and non-printable elements */
+  header, footer, #story-input-card, #btn-download-reflection-pdf, .no-print {
+    display: none !important;
+  }
+
+  /* Force print worksheet visibility and full width */
+  #printable-worksheet-container {
+    display: block !important;
+    position: static !important;
+    left: auto !important;
+    top: auto !important;
+    width: 100% !important;
+    z-index: auto !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+  }
+
+  .page-break-before {
+    page-break-before: always;
+    break-before: page;
+  }
+
+  .page-break-inside-avoid {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+}
+
